@@ -1,0 +1,2781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Hive Mind Rhythm Trials · Dr. Ozi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pitch:#000;--sludge:#0d1a0f;--slime:#4AA68D;--fire:#FF8500;
+  --blood:#FF3838;--pure:#fff;--cyan:#00E5FF;
+  --font-d:'Oswald',sans-serif;--font-m:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:var(--font-d);position:fixed;touch-action:pan-x pan-y;}
+/* Use dynamic viewport height on mobile so the address bar doesn't crop content */
+@supports(height:100dvh){html,body,#app{height:100dvh;}}
+#app{width:100%;height:100%;position:relative;}
+/* THE core screen-switching rule — every .screen div is absolutely positioned
+   and hidden by default; only the one with .active shows. This is the single
+   most load-bearing rule in the whole stylesheet: if it's missing, every
+   screen (title/tutorial/game/result) renders at once, stacked on top of
+   each other, which is exactly the bug this comment is here to prevent from
+   silently recurring. */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.screen.active{display:flex;}
+/* Only block default touch on the game stage itself, not the whole page */
+#stage{touch-action:none;}
+
+/* ═══════ LIMBO-FUSION ATMOSPHERE ═══════
+   Near-black void with layered depth-of-field fog, film grain, vignette,
+   drifting pollen motes, and bloom. Brand colors are the only saturated things
+   that punch through — bioluminescence in a dark forest. */
+.atmos{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+/* Deep hazy background gradient — a dim glow low on the horizon, everything else swallowed by dark */
+.atmos-void{position:absolute;inset:0;background:
+  radial-gradient(120% 80% at 50% 120%, rgba(74,166,141,.10), transparent 55%),
+  radial-gradient(90% 60% at 50% -10%, rgba(20,40,30,.5), transparent 60%),
+  linear-gradient(to bottom, #060a07 0%, #04070500 30%, #03060420 70%, #070d09 100%);}
+/* Two parallax fog banks drifting in opposite directions for depth */
+.atmos-fog{position:absolute;left:-30%;right:-30%;height:60%;
+  background:radial-gradient(ellipse 60% 100% at 30% 50%, rgba(120,150,135,.10), transparent 70%),
+            radial-gradient(ellipse 50% 100% at 70% 50%, rgba(90,120,105,.09), transparent 70%);
+}
+.atmos-fog.f1{top:10%;animation:fogDrift1 46s linear infinite;}
+.atmos-fog.f2{top:45%;animation:fogDrift2 62s linear infinite;opacity:.85;}
+@keyframes fogDrift1{0%{transform:translateX(-6%)}50%{transform:translateX(6%)}100%{transform:translateX(-6%)}}
+@keyframes fogDrift2{0%{transform:translateX(5%)}50%{transform:translateX(-5%)}100%{transform:translateX(5%)}}
+/* Parallax tree/vine silhouette line — Limbo's midground/background depth cue.
+   Far layer: small, dense, heavily blurred and dim (background trees swallowed
+   by haze). Near layer: taller, darker, slightly sharper, drifts opposite the
+   far layer for a true parallax read. A haze band sits between the two so the
+   far layer visibly recedes behind atmosphere, not just behind the near one. */
+.atmos-trees-far{position:absolute;left:-8%;right:-8%;bottom:6%;height:30%;background:#000;opacity:.5;
+  animation:fogDrift1 90s linear infinite;
+  clip-path:polygon(0% 100%,2.39% 100%,3.19% 68.98%,3.99% 100%,9.16% 100%,9.8% 61.28%,10.44% 100%,16.46% 100%,16.91% 61.85%,17.36% 100%,24.38% 100%,24.86% 70.6%,25.34% 100%,31.48% 100%,31.98% 55.46%,32.48% 100%,37.72% 100%,38.69% 59.45%,39.66% 100%,45.61% 100%,46.59% 64.07%,47.58% 100%,52.01% 100%,52.6% 54.83%,53.19% 100%,59.35% 100%,59.95% 69.64%,60.56% 100%,67.77% 100%,68.53% 68.39%,69.3% 100%,74.56% 100%,75.3% 64.55%,76.04% 100%,80.66% 100%,81.21% 70.81%,81.75% 100%,89.06% 100%,89.67% 63.45%,90.28% 100%,96.01% 100%,96.61% 62.94%,97.21% 100%,100% 100%);}
+.atmos-haze-mid{position:absolute;left:-10%;right:-10%;bottom:8%;height:26%;
+  background:linear-gradient(to top, rgba(70,95,82,.18), transparent 85%);pointer-events:none;}
+.atmos-trees-near{position:absolute;left:-8%;right:-8%;bottom:-1%;height:40%;background:#010301;opacity:.94;
+  animation:fogDrift2 70s linear infinite reverse;
+  clip-path:polygon(0% 100%,5.75% 100%,6.77% 54.17%,7.8% 100%,16.29% 100%,17.71% 30.7%,19.14% 100%,31.55% 100%,32.72% 52.13%,33.89% 100%,40.73% 100%,41.99% 47.78%,43.24% 100%,53.07% 100%,54.47% 48.44%,55.87% 100%,67.58% 100%,68.92% 47.73%,70.26% 100%,80.85% 100%,82.41% 54.79%,83.97% 100%,93.59% 100%,94.49% 43.77%,95.4% 100%,100% 100%);}
+/* Apocalyptic ruined-city skyline — sits behind the trees for extra depth.
+   Individual lit windows react to the hype/combo tier, brightening as a run
+   builds (driven by a CSS var set from JS). */
+.atmos-buildings{position:absolute;left:-6%;right:-6%;bottom:2%;height:46%;background:#020402;opacity:.88;z-index:2;
+  clip-path:polygon(0% 100%,2.09% 100%,2.09% 49.1%,11.93% 49.1%,11.93% 100%,16.2% 100%,16.2% 35.28%,24.88% 35.28%,24.88% 100%,25.18% 100%,25.18% 51.95%,36.08% 51.95%,36.08% 100%,41.16% 100%,41.16% 46.89%,49.96% 46.89%,49.96% 100%,50.83% 100%,50.83% 65.9%,61.21% 65.9%,61.21% 100%,65.26% 100%,65.26% 50.26%,74.41% 50.26%,74.41% 100%,77.08% 100%,77.08% 67.0%,84.06% 67.0%,84.06% 100%,88.64% 100%,88.64% 38.32%,97.44% 38.32%,97.44% 100%,100% 100%);}
+.building-window{position:absolute;width:3px;height:4px;background:rgba(255,180,90,var(--wlit,.35));box-shadow:0 0 4px rgba(255,180,90,var(--wlit,.35));pointer-events:none;transition:background .6s,box-shadow .6s;}
+/* Vignette — pulls the eye to center, darkens edges like a camera lens */
+.atmos-vignette{position:absolute;inset:0;background:radial-gradient(ellipse 78% 78% at 50% 45%, transparent 28%, rgba(0,0,0,.14) 55%, rgba(0,0,0,.4) 78%, rgba(0,0,0,.62) 100%);}
+/* Film grain — animated noise via SVG turbulence, low opacity */
+.atmos-grain{position:absolute;inset:-50%;opacity:.08;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grainShift 4s steps(2) infinite;}
+@keyframes grainShift{0%{transform:translate(0,0)}33%{transform:translate(-3%,2%)}66%{transform:translate(2%,-2%)}100%{transform:translate(0,0)}}
+/* Soft overall bloom — a screen-blended glow bleeding through the haze, the
+   "blown out" light-through-fog look rather than crisp, clean darkness. */
+.atmos-bloom{position:absolute;inset:0;background:radial-gradient(ellipse 65% 55% at 50% 52%, rgba(120,170,150,.10), transparent 72%);pointer-events:none;}
+/* ═══════ HYPE METER — a thin glowing bar built into every lane/line itself,
+   filling as combo builds and re-coloring per tier, so the lane feels alive
+   even between hits, not just the notes moving through it. Consistent across
+   every chapter. ═══════ */
+.hype-bar{position:absolute;left:0;bottom:0;height:4px;width:0%;--hc:#4AA68D;
+  background:var(--hc);
+  box-shadow:0 0 12px var(--hc),0 0 4px var(--hc);
+  transition:width .18s ease,background-color .3s;z-index:4;pointer-events:none;}
+/* THE hype strip — one fixed bar at the very bottom of the stage in EVERY chapter.
+   Identical position, identical brightness, never masked by lane fades. */
+.hype-strip{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(255,255,255,.05);z-index:18;pointer-events:none;overflow:visible;}
+.hype-strip .hype-bar{height:6px;}
+/* COLORED VIGNETTE — power-up state indicator. Edges glow the combo-tier color.
+   At MAX tier it breathes. */
+.hype-vignette{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;pointer-events:none;z-index:3;
+  background:radial-gradient(ellipse 80% 80% at 50% 50%, transparent 48%, var(--hv-color,rgba(74,166,141,.2)) 100%);}
+.hype-vignette.maxed{animation:maxPulse 1.1s ease-in-out infinite;}
+@keyframes maxPulse{0%,100%{opacity:.75}50%{opacity:1}}
+
+/* ═══════ SUPER SAIYAN MODE — ×100+ combo transformation ═══════
+   At ×100 the character's silhouette gets a golden aura and the atmosphere
+   turns hostile: storm clouds roll in, lightning flashes, embers drift up as
+   if trees are catching fire at the edges of the screen. At ×200 it intensifies
+   further (faster lightning, brighter aura). This is the "can't be boring" ask
+   made literal — the game visibly loses its mind at extreme combos. */
+#gc.warming{animation:charBob 3.2s ease-in-out infinite;filter:drop-shadow(0 0 calc(3px + var(--warm,0)*8px) rgba(255,209,71,calc(0.3 + var(--warm,0)*0.6)));}
+#gc.ssj{animation:charBob 3.2s ease-in-out infinite,ssjAura 0.5s ease-in-out infinite;filter:drop-shadow(0 0 10px #FFE066) drop-shadow(0 0 22px #FFD447);}
+#gc.ssj2{animation:charBob 3.2s ease-in-out infinite,ssjAura 0.28s ease-in-out infinite;filter:drop-shadow(0 0 14px #FFF6C8) drop-shadow(0 0 34px #FFE066) drop-shadow(0 0 54px #FF8500);}
+@keyframes ssjAura{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+.ssj-spark{position:absolute;width:3px;height:3px;border-radius:50%;background:#FFE066;box-shadow:0 0 6px #FFE066,0 0 12px #FF8500;pointer-events:none;z-index:6;}
+@keyframes sparkRise{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--sx),-70px) scale(.2);opacity:0}}
+/* Storm layer — lightning now lives BEHIND the building skyline (illuminating
+   the sky in the gaps between towers, like real distant lightning behind a
+   city), not a full-screen white flash. Only active once real hype/combo
+   builds (see stormIntensity) — never a constant background effect. */
+.storm-flash{position:absolute;left:-10%;right:-10%;bottom:0;height:58%;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 55% 100% at 50% 62%, rgba(205,215,255,.85), rgba(205,215,255,.2) 45%, transparent 68%);
+  opacity:0;mix-blend-mode:screen;}
+.storm-flash.strike{animation:lightningStrike .3s ease-out;}
+@keyframes lightningStrike{0%{opacity:0}10%{opacity:.5}20%{opacity:.08}30%{opacity:.32}45%{opacity:0}100%{opacity:0}}
+.rain{position:absolute;width:1px;background:linear-gradient(to bottom,transparent,rgba(180,210,230,.35));pointer-events:none;z-index:7;}
+@keyframes rainFall{0%{transform:translateY(-10vh)}100%{transform:translateY(110vh)}}
+/* Burning trees — the far tree silhouette flips to an orange gradient + flicker,
+   opacity/saturation scaling with --blaze (0..1) so it builds gradually rather
+   than snapping on at max combo */
+.atmos-trees-far.ablaze{background:linear-gradient(to top,#1a0800,#4a1400 40%,#FF6a00 100%)!important;opacity:calc(0.5 + var(--blaze,0)*0.35)!important;animation:emberFlicker .4s ease-in-out infinite alternate!important;filter:saturate(calc(0.4 + var(--blaze,0)*0.6));}
+@keyframes emberFlicker{0%{opacity:.65;filter:brightness(1)}100%{opacity:.85;filter:brightness(1.25)}}
+.ember{position:absolute;width:2px;height:2px;border-radius:50%;background:#FF8500;box-shadow:0 0 5px #FF8500,0 0 9px #FFD447;pointer-events:none;z-index:6;}
+@keyframes emberRise{0%{transform:translate(0,0);opacity:1}100%{transform:translate(var(--ex),-140px);opacity:0}}
+/* Character idle bob — a slow breathing float on the in-game figure so it never
+   reads as a static sticker. Targets the SVG so it can't fight wrapper transforms. */
+#gc{animation:charBob 3.2s ease-in-out infinite;}
+@keyframes charBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+/* Character hit-bounce — replaces the old instant-snap (scale jumps, then a
+   setTimeout hard-reverts it with zero easing, which read as robotic). This
+   is a real spring curve: overshoot past 1.0, settle back with a slight
+   wobble, like the character actually absorbed weight from the hit. Combined
+   with the idle bob so toggling this class doesn't kill that animation. */
+#gc.hitbounce{animation:charBob 3.2s ease-in-out infinite,charHitBounce .38s cubic-bezier(.2,1.6,.3,1);}
+@keyframes charHitBounce{0%{transform:scale(1)}30%{transform:scale(1.16)}55%{transform:scale(.96)}80%{transform:scale(1.03)}100%{transform:scale(1)}}
+/* Guitar-Hero hit pads (Ch6 vertical) — pulse on the beat via per-game duration. */
+.hit-pad{position:absolute;border-radius:12px;border:2px solid rgba(74,166,141,.4);background:rgba(20,40,30,.35);z-index:4;pointer-events:none;transition:border-color .1s,box-shadow .1s,background .1s;}
+.hit-pad.lit{border-color:var(--slime);background:rgba(74,166,141,.25);box-shadow:0 0 24px rgba(74,166,141,.7);}
+@keyframes padPulse{0%,100%{border-color:rgba(74,166,141,.4)}12%{border-color:rgba(74,166,141,.85)}30%{border-color:rgba(74,166,141,.4)}}
+/* Ghost subdivision ticks — a faint, constant click-track of dots flowing at
+   the same speed as real notes, so you always have a subdivision grid to read
+   against, not just the notes that happen to exist. */
+.ghost-tick{transition:opacity .1s linear;}
+/* Character "eating" the note it's holding — a fast small jitter, purely on an
+   inner wrapper so it never fights the outer element's own position transform. */
+.char-inner{display:inline-block;}
+@keyframes eatVibrate{
+  0%,100%{transform:translate(0,0) rotate(0deg)}
+  20%{transform:translate(-1.5px,1px) rotate(-2deg)}
+  40%{transform:translate(1.5px,-1px) rotate(2deg)}
+  60%{transform:translate(-1px,-1.5px) rotate(-1deg)}
+  80%{transform:translate(1px,1.5px) rotate(1deg)}
+}
+.char-vibrate{animation:eatVibrate .1s linear infinite;}
+.atmos-aura{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;
+  background:radial-gradient(ellipse 90% 90% at 50% 50%, transparent 55%, var(--aura-color,rgba(74,166,141,.25)) 130%);}
+/* Drifting pollen motes */
+.mote{position:absolute;border-radius:50%;background:rgba(180,210,195,.5);pointer-events:none;
+  box-shadow:0 0 6px rgba(150,200,175,.4);}
+@keyframes moteFloat{
+  0%{transform:translate(0,0);opacity:0}
+  10%{opacity:.6}
+  90%{opacity:.5}
+  100%{transform:translate(var(--mx,20px),var(--my,-120px));opacity:0}}
+/* Screen flash on perfect hits */
+.atmos-flash{position:absolute;inset:0;background:var(--flash-color,#4AA68D);opacity:0;pointer-events:none;}
+.atmos-flash.fire{animation:flashPop .28s ease-out;}
+@keyframes flashPop{0%{opacity:.22}100%{opacity:0}}
+/* Screen-shake applied to the whole game screen */
+@keyframes shakeHit{0%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}50%{transform:translate(3px,-2px)}75%{transform:translate(-2px,-1px)}100%{transform:translate(0,0)}}
+.shake{animation:shakeHit .18s ease-out;}
+/* Particle burst */
+.burst{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:20;}
+@keyframes burstOut{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--bx),var(--by)) scale(.3);opacity:0}}
+/* Shockwave ring — fires on perfect / high-combo hits for extra arcade punch */
+.shockwave{position:absolute;width:10px;height:10px;border-radius:50%;pointer-events:none;z-index:19;border:2px solid var(--sc,#4AA68D);transform:translate(-50%,-50%);}
+@keyframes shockOut{0%{width:10px;height:10px;opacity:.9}100%{width:160px;height:160px;opacity:0}}
+/* Note-completion pop — on a judged hit the note gives a quick scale-punch and
+   the inner swivel sheen flares. Lives INSIDE the note block (per request), not
+   as a separate ring. */
+.note-swivel{position:absolute;pointer-events:none;z-index:21;border-radius:8px;animation:noteSwivelOut .4s cubic-bezier(.2,.8,.3,1) forwards;}
+@keyframes noteSwivelOut{0%{transform:translate(-50%,-50%) scale(1) rotate(0deg);opacity:.95}100%{transform:translate(-50%,-50%) scale(.15) rotate(130deg);opacity:0}}
+/* The swivel sheen: a rotating conic highlight that sweeps around WITHIN each
+   note block as it travels, so the block itself feels animated and alive rather
+   than a flat lit rectangle. Sits under the label, above the fill. */
+.note-live > .swivel{position:absolute;inset:2px;border-radius:inherit;pointer-events:none;z-index:0;opacity:.5;
+  background:conic-gradient(from var(--sw,0deg), transparent 0deg, var(--nc,#4AA68D) 40deg, transparent 120deg, transparent 360deg);
+  -webkit-mask:radial-gradient(circle at center, #000 40%, transparent 72%);mask:radial-gradient(circle at center, #000 40%, transparent 72%);
+  animation:swivelSpin 2.2s linear infinite;}
+@keyframes swivelSpin{to{--sw:360deg}}
+.note-live.hit{animation:noteHitPop .34s cubic-bezier(.2,1.5,.35,1);}
+@keyframes noteHitPop{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+/* Lane texture — a slow pulsing inner glow, so the flat lane background reads
+   as alive instead of a static color block. (Removed the diagonal scan-line
+   sweep — it read as visual clutter, competing with the notes themselves.) */
+.lane-tex::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 140% at 22% 50%, rgba(74,166,141,.11), transparent 70%);
+  animation:lanePulse 2.6s ease-in-out infinite;}
+@keyframes lanePulse{0%,100%{opacity:.4}50%{opacity:1}}
+/* Beat-synced pulse ring for Chapter 3 ("Pulse") — an expanding ring timed to
+   the actual beat duration, so the chapter's name is something you SEE. */
+.pulse-ring{position:absolute;border-radius:50%;border:2px solid rgba(74,166,141,.6);pointer-events:none;z-index:2;transform:translate(-50%,-50%);animation:pulseExpand var(--pbms,600ms) ease-out infinite;}
+@keyframes pulseExpand{0%{width:14px;height:14px;opacity:.9;border-width:3px}100%{width:70px;height:70px;opacity:0;border-width:1px}}
+
+/* ═══════ MOBILE LAYOUT ═══════
+   On phones: the title screen content can exceed screen height, so we make it
+   scrollable. Everything else (game, tutorial, results) stays fixed/full-screen.
+   Font sizes, padding, and card sizes all shrink for <600px screens. */
+@media(max-width:599px){
+  #title-screen{justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 12px 24px;}
+  .brand{font-size:8px;margin-bottom:12px;}
+  .title-main{font-size:clamp(32px,10vw,52px);line-height:.9;margin-bottom:4px;}
+  .title-sub{font-size:10px;margin-bottom:8px;}
+  #title-char-slot>div{margin-bottom:10px!important;}
+  #title-char-slot svg{transform:scale(.75);transform-origin:bottom center;}
+  .bpm-wrap{margin-bottom:12px;}
+  #bpm-num{font-size:40px;padding:0 14px 2px;}
+  .ch-select-lbl{margin-bottom:8px;}
+  .ch-grid{grid-template-columns:repeat(3,1fr);gap:7px;width:100%;}
+  .ch-card{padding:12px 6px 10px;gap:4px;border-radius:6px;}
+  .ch-card .ci{font-size:20px;}
+  .ch-card .ct{font-size:9px;}
+  .ch-card .cg{font-size:6px;}
+  .ch-card .cb{font-size:6px;display:none;}/* hide hint on very small cards */
+  .big-btn{padding:12px 36px;font-size:14px;margin-top:0;}
+  /* Tutorial screen — scroll if content overflows */
+  #tutorial-screen{justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 14px 28px;}
+  #tut-title{font-size:22px;margin-bottom:10px;}
+  .tut-notes{gap:7px;}
+  .tut-demo{width:160px;height:90px;}
+  /* Game HUD — tighter on small screens */
+  .hud{padding:8px 10px;}
+  .hud .v b{font-size:15px;}
+  #count-in .cnum{font-size:80px;}
+  .combo-arcade .num{font-size:44px;}
+  /* Results screen */
+  #result-screen{padding:16px 14px 24px;justify-content:flex-start;overflow-y:auto;}
+  .res-stats{grid-template-columns:repeat(2,1fr);gap:8px;}
+}
+   faster the closer a note gets to the hit-line, so notes read as approaching
+   energy instead of static neon boxes. --nc = note color, --spin = rotation
+   duration (set/updated per-frame). Falls back gracefully to a static ring
+   on browsers without @property support. ═══════ */
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg;}
+@property --sw{syntax:'<angle>';inherits:false;initial-value:0deg;}
+/* Soft lane band — replaces the old hard-bordered/filled rectangle. Just a faint
+   depth gradient that fades out at top and bottom into the void, so the play
+   area reads as a band of light in open Limbo space (like Ch4), not a boxed-in
+   rectangle sitting on the background. Keeps the lane-tex glow + scan on top. */
+.lane-soft{background:linear-gradient(to bottom, transparent, rgba(20,40,30,.32) 30%, rgba(20,40,30,.32) 70%, transparent) !important;border:none !important;
+  -webkit-mask:linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);mask:linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  box-shadow:0 0 40px rgba(0,0,0,.4) inset;}
+/* Vertical variant (Ch2 Drop) — fades at left/right edges instead. */
+.lane-soft-v{background:linear-gradient(to right, transparent, rgba(20,40,30,.3) 22%, rgba(20,40,30,.3) 78%, transparent) !important;border:none !important;
+  -webkit-mask:linear-gradient(to right, transparent, #000 16%, #000 84%, transparent);mask:linear-gradient(to right, transparent, #000 16%, #000 84%, transparent);}
+.note-live{position:relative;}
+.note-live::before{
+  content:'';position:absolute;inset:-4px;border-radius:inherit;padding:2px;
+  background:conic-gradient(from var(--ang,0deg), var(--nc,#4AA68D), transparent 25%, var(--nc,#4AA68D) 55%, transparent 85%, var(--nc,#4AA68D));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  animation:borderSpin var(--spin,1.1s) linear infinite;
+  pointer-events:none;opacity:.9;
+}
+@keyframes borderSpin{to{--ang:360deg}}
+
+/* ═══════ ARCADE COMBO POPUP — Guitar-Hero style ×N COMBO punch-in ═══════ */
+.combo-arcade{position:absolute;left:50%;top:36%;transform:translate(-50%,-50%);z-index:26;pointer-events:none;text-align:center;opacity:0;}
+.combo-arcade.pop{animation:comboPop .65s cubic-bezier(.2,1.6,.35,1) forwards;}
+@keyframes comboPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(-8deg);}
+  14%{opacity:1;transform:translate(-50%,-50%) scale(1.3) rotate(4deg);}
+  30%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg);}
+  78%{opacity:1;transform:translate(-50%,-58%) scale(1.02);}
+  100%{opacity:0;transform:translate(-50%,-78%) scale(.92);}
+}
+.combo-arcade .num{font-family:var(--font-d);font-size:60px;font-weight:700;letter-spacing:.02em;-webkit-text-stroke:1.5px rgba(255,255,255,.18);line-height:1;}
+.combo-arcade .lbl{font-family:var(--font-m);font-size:12px;letter-spacing:.5em;margin-top:4px;}
+
+/* On mobile: kill the per-frame CSS animations that eat GPU. The game still
+   works fine — the visual texture is just simplified. Keep lanePulse (it's a
+   single opacity tween, cheap) but drop the background-position scan. */
+@media(max-width:599px){
+  .atmos-grain,.t-grain{display:none;}/* grain on mobile is invisible & expensive */
+  .atmos-trees-far,.atmos-haze-mid{display:none;}/* far depth not visible on small screens */
+  .atmos-fog.f2{display:none;}/* one fog layer max on mobile */
+  .note-live > .swivel{animation-duration:4s;}/* slow down inner swivel */
+}
+   Deeper, darker, and hazier than the in-game atmosphere: more fog layers,
+   a soft vertical light shaft, a jagged foreground silhouette (reeds/grass)
+   for depth-of-field, heavier vignette + grain. Nothing saturated except
+   the brand accents bleeding faintly through the murk. */
+#title-screen{overflow:hidden;}
+.atmos-title{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+.atmos-title .t-void{position:absolute;inset:0;background:
+  radial-gradient(70% 55% at 50% 8%, rgba(60,90,75,.16), transparent 60%),
+  radial-gradient(120% 70% at 50% 115%, rgba(20,35,28,.6), transparent 55%),
+  linear-gradient(to bottom, #030503 0%, #020402 45%, #01020100 65%, #04070405 85%, #050a06 100%);}
+.atmos-title .t-beam{position:absolute;top:-14%;left:50%;width:46%;height:75%;transform:translateX(-50%);
+  background:radial-gradient(ellipse 35% 100% at 50% 0%, rgba(140,175,160,.09), transparent 68%);
+  filter:blur(18px);}
+.atmos-title .t-fog{position:absolute;left:-35%;right:-35%;height:55%;
+  background:radial-gradient(ellipse 55% 100% at 35% 50%, rgba(110,140,125,.07), transparent 72%),
+             radial-gradient(ellipse 45% 100% at 65% 50%, rgba(80,105,92,.06), transparent 72%);
+}
+.atmos-title .t-fog.tf1{top:2%;animation:fogDrift1 54s linear infinite;}
+.atmos-title .t-fog.tf2{top:38%;animation:fogDrift2 71s linear infinite;opacity:.75;}
+.atmos-title .t-fog.tf3{top:66%;animation:fogDrift1 88s linear infinite reverse;opacity:.55;}
+.atmos-title .t-grass{position:absolute;left:-4%;right:-4%;bottom:-3%;height:14%;background:#010301;opacity:.92;
+  clip-path:polygon(0% 100%,2% 42%,4% 100%,7% 58%,9% 100%,12% 30%,15% 100%,18% 62%,21% 100%,24% 46%,27% 100%,30% 60%,33% 100%,36% 34%,39% 100%,42% 64%,45% 100%,48% 40%,51% 100%,54% 58%,57% 100%,60% 32%,63% 100%,66% 62%,69% 100%,72% 44%,75% 100%,78% 60%,81% 100%,84% 36%,87% 100%,90% 64%,93% 100%,96% 42%,100% 100%);}
+.atmos-title .t-vignette{position:absolute;inset:0;background:radial-gradient(ellipse 74% 74% at 50% 42%, transparent 28%, rgba(0,0,0,.14) 54%, rgba(0,0,0,.42) 78%, rgba(0,0,0,.66) 100%);}
+.atmos-title .t-grain{position:absolute;inset:-50%;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grainShift 4s steps(2) infinite;}
+#title-screen>*:not(.atmos-title){position:relative;z-index:1;}
+
+/* TITLE */
+.brand{font-family:var(--font-m);font-size:10px;letter-spacing:.3em;color:var(--slime);text-transform:uppercase;margin-bottom:24px;text-align:center;}
+.brand span{color:var(--fire);}
+.title-main{font-size:clamp(38px,9vw,68px);font-weight:700;letter-spacing:.05em;text-transform:uppercase;text-align:center;line-height:.88;}
+.title-sub{font-family:var(--font-m);font-size:11px;letter-spacing:.2em;color:#666;margin:10px 0 28px;text-align:center;}
+.bpm-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:28px;}
+.calib-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:24px;}
+.calib-lbl{font-family:var(--font-m);font-size:9px;letter-spacing:.2em;color:var(--slime);text-transform:uppercase;}
+.calib-lbl span{color:var(--cyan);}
+.calib-hint{font-family:var(--font-m);font-size:8px;color:#4a5a52;max-width:280px;text-align:center;line-height:1.5;}
+.bpm-lbl{font-family:var(--font-m);font-size:9px;letter-spacing:.2em;color:var(--slime);text-transform:uppercase;}
+#bpm-num{font-size:58px;font-weight:700;color:var(--fire);cursor:ns-resize;touch-action:none;line-height:1;border-bottom:2px solid var(--fire);padding:0 20px 4px;}
+.bpm-lvl{font-family:var(--font-m);font-size:11px;letter-spacing:.12em;text-transform:uppercase;min-height:16px;}
+.bpm-ctrl{display:flex;gap:20px;margin-top:6px;}
+.bpm-btn{width:44px;height:44px;border:1px solid #18402D;background:var(--sludge);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.bpm-btn:active{background:var(--slime);color:#000;}
+.ch-select-lbl{font-family:var(--font-m);font-size:9px;letter-spacing:.2em;color:#555;text-transform:uppercase;margin-bottom:12px;}
+.ch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(560px,94vw);margin-bottom:24px;}
+.ch-card{padding:18px 12px 14px;background:linear-gradient(160deg,rgba(22,50,31,.7),rgba(10,22,14,.85));border:1px solid #1a3a26;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px;transition:all .18s;border-radius:8px;position:relative;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:rgba(74,166,141,.15);}
+.ch-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 0%,rgba(74,166,141,.07),transparent 70%);pointer-events:none;}
+.ch-card.sel{border-color:var(--slime);background:linear-gradient(160deg,rgba(22,60,38,.8),rgba(10,28,16,.9));box-shadow:0 0 18px rgba(74,166,141,.22),inset 0 0 12px rgba(74,166,141,.08);}
+.ch-card:hover:not(.sel){border-color:#2a5a38;background:linear-gradient(160deg,rgba(22,50,31,.85),rgba(10,22,14,.9));}
+.ch-card .cn{font-family:var(--font-m);font-size:7px;color:#3a4a40;letter-spacing:.15em;line-height:1;opacity:.7;}
+.ch-card .ci{font-size:28px;line-height:1;filter:drop-shadow(0 0 6px currentColor);display:flex;align-items:center;justify-content:center;height:32px;}
+.ch-card .ct{font-size:11px;font-weight:700;text-align:center;letter-spacing:.04em;color:#c8d4c8;line-height:1.2;}
+.ch-card .cg{font-family:var(--font-m);font-size:7px;color:var(--fire);text-transform:uppercase;letter-spacing:.12em;}
+.ch-card .cb{font-family:var(--font-m);font-size:7px;color:#486454;letter-spacing:.06em;text-align:center;line-height:1.5;margin-top:2px;}
+.big-btn{padding:15px 52px;background:transparent;border:2px solid var(--slime);color:var(--slime);font-family:var(--font-d);font-size:16px;font-weight:600;letter-spacing:.2em;cursor:pointer;text-transform:uppercase;transition:all .15s;touch-action:manipulation;}
+.big-btn:active{background:var(--slime);color:#000;}
+
+/* TUTORIAL */
+#tut-eyebrow{font-family:var(--font-m);font-size:10px;letter-spacing:.25em;color:var(--slime);text-transform:uppercase;margin-bottom:10px;}
+#tut-title{font-size:30px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px;text-align:center;}
+.tut-notes{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:16px;max-width:460px;}
+.tut-note{background:var(--sludge);border:1px solid #18402D;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.tut-note .s{font-size:26px;}.tut-note .i .n{font-size:13px;font-weight:600;color:var(--slime);}
+.tut-note .i .b{font-family:var(--font-m);font-size:9px;color:#888;margin-top:2px;}
+.tut-how{background:var(--sludge);border:1px solid var(--fire);padding:16px 20px;max-width:460px;font-family:var(--font-m);font-size:12px;color:var(--fire);line-height:1.65;letter-spacing:.03em;margin-bottom:16px;text-align:center;}
+/* Tutorial "gif" — a looping finger-tap or finger-hold demo so visual learners
+   can see the mechanic instead of just reading it. */
+.tut-demo{position:relative;width:200px;height:112px;margin:0 0 16px;background:var(--sludge);border:1px solid #18402D;border-radius:10px;overflow:hidden;}
+.tut-demo-line{position:absolute;left:50%;top:0;bottom:0;width:2px;background:rgba(74,166,141,.5);transform:translateX(-50%);}
+.tut-demo-note{position:absolute;left:50%;top:56%;width:44px;height:44px;margin:-22px 0 0 -22px;border:2px solid var(--fire);border-radius:9px;background:linear-gradient(160deg,#16321f,#0a1610);box-shadow:0 0 14px #FF850066;}
+.tut-demo.mode-hold .tut-demo-note{width:96px;height:32px;margin:-16px 0 0 -48px;border-radius:7px;}
+.tut-demo-finger{position:absolute;left:50%;top:-6px;width:18px;height:52px;transform:translateX(-50%);}
+.tut-demo-finger-tip{position:absolute;left:0;right:0;top:0;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e8d9c0,#a9835a);box-shadow:0 3px 6px rgba(0,0,0,.5);}
+.tut-demo-finger-stem{position:absolute;left:5px;right:5px;top:14px;bottom:0;background:linear-gradient(#c9a878,#8a6642);border-radius:0 0 6px 6px;}
+.tut-demo-ripple{position:absolute;left:50%;top:56%;width:10px;height:10px;border-radius:50%;border:2px solid var(--slime);opacity:0;transform:translate(-50%,-50%);}
+.tut-demo-lbl{position:absolute;left:0;right:0;bottom:5px;text-align:center;font-family:var(--font-m);font-size:8px;letter-spacing:.2em;color:#6a7a6f;text-transform:uppercase;}
+.tut-demo.mode-tap .tut-demo-finger{animation:fingerTap 1.3s ease-in-out infinite;}
+.tut-demo.mode-tap .tut-demo-ripple{animation:tapRipple 1.3s ease-in-out infinite;}
+.tut-demo.mode-tap .tut-demo-note{animation:tapNoteFlash 1.3s ease-in-out infinite;}
+@keyframes fingerTap{0%,20%{transform:translateX(-50%) translateY(0)}32%,44%{transform:translateX(-50%) translateY(36px)}56%,100%{transform:translateX(-50%) translateY(0)}}
+@keyframes tapRipple{0%,28%{opacity:0;transform:translate(-50%,-50%) scale(.3)}34%{opacity:.9;transform:translate(-50%,-50%) scale(.3)}55%{opacity:0;transform:translate(-50%,-50%) scale(2.2)}100%{opacity:0}}
+@keyframes tapNoteFlash{0%,30%{box-shadow:0 0 14px #FF850066;border-color:var(--fire)}36%,50%{box-shadow:0 0 26px #4AA68Dcc;border-color:var(--slime)}60%,100%{box-shadow:0 0 14px #FF850066;border-color:var(--fire)}}
+.tut-demo.mode-hold .tut-demo-finger{animation:fingerHold 2.2s ease-in-out infinite;}
+.tut-demo.mode-hold .tut-demo-note{animation:holdNoteFlash 2.2s ease-in-out infinite;}
+@keyframes fingerHold{0%,10%{transform:translateX(-50%) translateY(0)}22%,75%{transform:translateX(-50%) translateY(28px)}88%,100%{transform:translateX(-50%) translateY(0)}}
+@keyframes holdNoteFlash{0%,18%{box-shadow:0 0 14px #FF850066;border-color:var(--fire)}24%,74%{box-shadow:0 0 26px #4AA68Dcc;border-color:var(--slime)}80%,100%{box-shadow:0 0 14px #FF850066;border-color:var(--fire)}}
+.tut-timing{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:22px;font-family:var(--font-m);font-size:10px;}
+.tut-timing .t{display:flex;align-items:center;gap:5px;}
+.tut-timing .d{width:9px;height:9px;border-radius:50%;}
+.tut-acts{display:flex;gap:12px;}
+.tut-btn{padding:13px 34px;background:transparent;border:2px solid #18402D;color:#fff;font-family:var(--font-d);font-size:14px;font-weight:600;letter-spacing:.15em;cursor:pointer;text-transform:uppercase;transition:all .15s;touch-action:manipulation;}
+.tut-btn.primary{border-color:var(--slime);color:var(--slime);}
+.tut-btn.primary:active{background:var(--slime);color:#000;}
+
+/* GAME */
+#game-screen{padding:0;justify-content:flex-start;}
+.hud{position:absolute;top:0;left:0;right:0;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:20;background:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);}
+.hud .v{font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:#888;}
+.hud .v b{font-size:18px;font-weight:600;display:block;}
+/* ═══════ REWARD JUICE — the "why do I keep playing" layer ═══════
+   Every single successful hit, not just milestones, gets a small tangible
+   reward: the score number punches, and a glowing point flies from the hit
+   spot to the score display. Same trick mobile/casual games use to keep the
+   loop satisfying moment-to-moment, not just on big combos. */
+#hud-score.pop{animation:scorePop .28s cubic-bezier(.3,1.6,.4,1);display:inline-block;}
+@keyframes scorePop{0%{transform:scale(1)}40%{transform:scale(1.24);color:#fff}100%{transform:scale(1)}}
+.point-fly{position:absolute;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:24;will-change:transform,opacity;}
+@keyframes flyToScore{
+  0%{opacity:1;transform:translate(0,0) scale(1);}
+  65%{opacity:1;}
+  100%{opacity:0;transform:translate(var(--fx),var(--fy)) scale(.25);}
+}
+.hud-score b{color:#fff;}.hud-combo{font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--cyan);min-width:50px;text-align:center;}
+.hud-miss b{color:var(--blood);}
+#stage{position:absolute;inset:0;overflow:hidden;z-index:1;}
+#count-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:30;background:rgba(0,0,0,.7);}
+#pause-btn{position:absolute;top:88px;left:50%;transform:translateX(-50%);z-index:25;background:rgba(0,0,0,.5);border:1px solid #2a4a38;color:#7a9a88;font-family:var(--font-m);font-size:13px;letter-spacing:.15em;padding:6px 14px;border-radius:6px;cursor:pointer;}
+#pause-btn:hover{border-color:var(--slime);color:var(--slime);}
+#pause-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:40;background:rgba(0,0,0,.82);}
+.pause-card{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.pause-title{font-family:var(--font-m);font-size:16px;letter-spacing:.35em;color:var(--slime);margin-bottom:10px;}
+.pause-opt{width:220px;padding:14px;background:var(--sludge);border:1px solid #2a4a38;color:#cfe;font-family:var(--font-m);font-size:14px;letter-spacing:.2em;border-radius:8px;cursor:pointer;transition:all .15s;touch-action:manipulation;}
+.pause-opt:hover{border-color:var(--slime);background:#12281c;color:var(--slime);}
+#count-in .cnum{font-size:120px;font-weight:700;color:var(--slime);line-height:1;}
+#count-in .clbl{font-family:var(--font-m);font-size:12px;letter-spacing:.3em;color:#888;text-transform:uppercase;margin-top:12px;}
+#timing-pop{position:absolute;top:64px;left:50%;transform:translateX(-50%);font-family:var(--font-m);font-size:11px;letter-spacing:.1em;color:#666;opacity:0;transition:opacity .2s;z-index:20;pointer-events:none;}
+.metro-row{position:absolute;top:52px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:20;}
+.metro-row .md{width:7px;height:7px;border-radius:50%;background:#222;}
+.metro-row .md.on{background:var(--slime);}.metro-row .md.strong{background:var(--fire);}
+.hit-pop{position:absolute;left:50%;top:40%;transform:translateX(-50%);font-family:var(--font-d);font-size:26px;font-weight:700;letter-spacing:.08em;opacity:0;pointer-events:none;z-index:15;}
+
+/* RESULT */
+#res-eyebrow{font-family:var(--font-m);font-size:10px;letter-spacing:.25em;color:var(--slime);text-transform:uppercase;margin-bottom:8px;}
+#res-grade{font-size:clamp(26px,7vw,52px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:8px 0 2px;text-align:center;}
+#res-score{font-size:clamp(46px,12vw,88px);font-weight:700;color:var(--slime);line-height:1;}
+#res-sub{font-family:var(--font-m);font-size:11px;color:#666;letter-spacing:.12em;margin-bottom:22px;}
+.res-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(460px,92vw);margin-bottom:20px;}
+.res-stat{background:var(--sludge);border:1px solid #18402D;padding:12px 8px;text-align:center;}
+.res-stat .l{font-family:var(--font-m);font-size:8px;color:#555;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;}
+.res-stat .v{font-size:20px;font-weight:700;}
+.res-coach{background:var(--sludge);border:1px solid var(--fire);padding:13px 18px;width:min(460px,92vw);font-family:var(--font-m);font-size:11px;color:var(--fire);line-height:1.6;margin-bottom:22px;text-align:left;}
+.res-acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.res-btn{padding:12px 24px;background:transparent;border:2px solid #18402D;color:#fff;font-family:var(--font-d);font-size:13px;font-weight:600;letter-spacing:.12em;cursor:pointer;text-transform:uppercase;transition:all .15s;touch-action:manipulation;}
+.res-btn.primary{border-color:var(--slime);color:var(--slime);}
+.res-btn.primary:active{background:var(--slime);color:#000;}
+/* Leaderboard — local top scores per chapter, stored on-device */
+.res-board{width:min(420px,92vw);margin:14px 0;background:linear-gradient(160deg,rgba(22,50,31,.5),rgba(10,22,14,.7));border:1px solid #1a3a26;border-radius:10px;padding:14px 16px;}
+.res-board-title{font-family:var(--font-m);font-size:10px;letter-spacing:.25em;color:#6a8a75;text-transform:uppercase;margin-bottom:10px;text-align:center;}
+.res-board-row{display:flex;align-items:center;gap:10px;padding:5px 0;font-family:var(--font-m);font-size:12px;border-bottom:1px solid rgba(24,64,45,.3);}
+.res-board-row:last-child{border-bottom:none;}
+.res-board-row .rk{width:20px;color:#556;font-weight:700;}
+.res-board-row .rn{flex:1;color:#aab;}
+.res-board-row .rs{color:var(--slime);font-weight:700;}
+.res-board-row.you{background:rgba(74,166,141,.12);border-radius:6px;margin:0 -6px;padding:5px 6px;}
+.res-board-row.you .rk{color:var(--fire);}
+/* New high score banner */
+.res-newhigh{font-family:var(--font-m);font-size:11px;letter-spacing:.15em;color:#FFD447;text-align:center;margin-bottom:8px;text-transform:uppercase;opacity:0;transition:opacity .4s;}
+.res-newhigh.show{opacity:1;animation:newHighPulse 1s ease-in-out infinite;}
+@keyframes newHighPulse{0%,100%{text-shadow:0 0 8px #FFD447}50%{text-shadow:0 0 20px #FFD447,0 0 34px #FF8500}}
+/* Coaching CTA — 1-on-1 booking link, rotating message */
+.res-cta{width:min(420px,92vw);margin-top:6px;padding:16px 18px;background:linear-gradient(160deg,rgba(255,133,0,.14),rgba(10,22,14,.6));border:2px solid rgba(255,133,0,.5);border-radius:10px;text-align:center;position:relative;overflow:hidden;
+  box-shadow:0 0 24px rgba(255,133,0,.18),inset 0 0 20px rgba(255,133,0,.06);animation:ctaBreathe 2.6s ease-in-out infinite;}
+@keyframes ctaBreathe{0%,100%{box-shadow:0 0 24px rgba(255,133,0,.18),inset 0 0 20px rgba(255,133,0,.06);border-color:rgba(255,133,0,.5)}50%{box-shadow:0 0 40px rgba(255,133,0,.32),inset 0 0 28px rgba(255,133,0,.1);border-color:rgba(255,133,0,.8)}}
+.res-cta::before{content:'';position:absolute;inset:0;background:conic-gradient(from var(--csw,0deg),transparent 0deg,rgba(255,133,0,.25) 30deg,transparent 90deg,transparent 360deg);animation:ctaSweep 3s linear infinite;pointer-events:none;}
+@keyframes ctaSweep{to{--csw:360deg}}
+@property --csw{syntax:'<angle>';inherits:false;initial-value:0deg;}
+.res-cta-msg{font-family:var(--font-d);font-size:13px;color:#fff;line-height:1.5;margin-bottom:12px;position:relative;z-index:1;}
+.res-cta a{display:inline-block;font-family:var(--font-m);font-size:12px;font-weight:700;letter-spacing:.15em;color:#000;text-decoration:none;background:var(--fire);border:2px solid var(--fire);padding:11px 22px;border-radius:6px;text-transform:uppercase;transition:transform .15s;touch-action:manipulation;position:relative;z-index:1;
+  box-shadow:0 0 18px rgba(255,133,0,.5);animation:ctaPulse 1.4s ease-in-out infinite;}
+@keyframes ctaPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+.res-cta a:active{transform:scale(.96);}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div class="screen active" id="title-screen">
+  <div class="atmos-title" id="atmos-title">
+    <div class="t-void"></div>
+    <div class="atmos-trees-far"></div>
+    <div class="atmos-haze-mid"></div>
+    <div class="atmos-buildings" id="buildings-title"></div>
+    <div class="t-fog tf1"></div>
+    <div class="t-fog tf2"></div>
+    <div class="t-fog tf3"></div>
+    <div class="atmos-trees-near"></div>
+    <div class="t-beam"></div>
+    <div class="atmos-bloom"></div>
+    <div class="t-grass"></div>
+    <div class="t-vignette"></div>
+    <div class="t-grain"></div>
+  </div>
+  <div class="brand">Dr. Ozi · Hard Tooth Records · <span>Hive Mind</span></div>
+  <div class="title-main">Rhythm<br>Trials</div>
+  <div class="title-sub">Learn rhythm. Feel it first.</div>
+  <div id="title-char-slot"></div>
+  <div class="bpm-wrap">
+    <div class="bpm-lbl">Tempo</div>
+    <div id="bpm-num">80</div>
+    <div class="bpm-lvl" id="bpm-lvl">DEVELOPING</div>
+    <div class="bpm-ctrl">
+      <div class="bpm-btn" id="bpm-minus">−</div>
+      <div class="bpm-btn" id="bpm-plus">+</div>
+    </div>
+  </div>
+  <div class="ch-select-lbl">Choose your trial</div>
+  <div class="ch-grid" id="ch-grid"></div>
+  <div class="big-btn" id="start-btn">Begin →</div>
+</div>
+
+<div class="screen" id="tutorial-screen">
+  <div id="tut-eyebrow"></div>
+  <div id="tut-title"></div>
+  <div class="tut-notes" id="tut-notes"></div>
+  <div class="tut-demo" id="tut-demo">
+    <div class="tut-demo-line"></div>
+    <div class="tut-demo-note"></div>
+    <div class="tut-demo-ripple"></div>
+    <div class="tut-demo-finger"><div class="tut-demo-finger-tip"></div><div class="tut-demo-finger-stem"></div></div>
+    <div class="tut-demo-lbl" id="tut-demo-lbl"></div>
+  </div>
+  <div class="tut-how" id="tut-how"></div>
+  <div class="tut-timing">
+    <div class="t"><div class="d" style="background:var(--slime)"></div>PERFECT 100</div>
+    <div class="t"><div class="d" style="background:var(--fire)"></div>GOOD 60</div>
+    <div class="t"><div class="d" style="background:#c8b040"></div>CLOSE 25</div>
+    <div class="t"><div class="d" style="background:var(--blood)"></div>MISS 0</div>
+  </div>
+  <div class="tut-acts">
+    <div class="tut-btn" id="tut-back">← Back</div>
+    <div class="tut-btn primary" id="tut-play">Play →</div>
+  </div>
+</div>
+
+<div class="screen" id="game-screen">
+  <div class="atmos" id="atmos">
+    <div class="atmos-void"></div>
+    <div class="atmos-trees-far"></div>
+    <div class="atmos-haze-mid"></div>
+    <div class="atmos-buildings" id="buildings-game"></div>
+    <div class="atmos-fog f1"></div>
+    <div class="atmos-fog f2"></div>
+    <div class="atmos-trees-near"></div>
+    <div class="atmos-bloom"></div>
+    <div class="atmos-aura" id="atmos-aura"></div>
+    <div class="hype-vignette" id="hype-vignette"></div>
+    <div class="storm-flash" id="storm-flash"></div>
+    <div class="atmos-vignette"></div>
+    <div class="atmos-grain"></div>
+    <div class="atmos-flash" id="atmos-flash"></div>
+  </div>
+  <div class="hud">
+    <div class="v hud-score">SCORE<b id="hud-score">0</b></div>
+    <div class="hud-combo" id="hud-combo"></div>
+    <div class="v hud-miss" style="text-align:right">MISS<b id="hud-miss">0</b></div>
+  </div>
+  <button id="pause-btn" aria-label="Pause">❚❚</button>
+  <div class="combo-arcade" id="combo-arcade"></div>
+  <div class="metro-row" id="metro-row"></div>
+  <div id="timing-pop"></div>
+  <div id="stage"></div>
+  <div id="count-in" style="display:none"><div class="cnum" id="cnum">4</div><div class="clbl" id="clbl">get ready</div></div>
+  <div id="pause-overlay" style="display:none">
+    <div class="pause-card">
+      <div class="pause-title">PAUSED</div>
+      <button class="pause-opt" id="pause-resume">RESUME</button>
+      <button class="pause-opt" id="pause-retry">RETRY</button>
+      <button class="pause-opt" id="pause-menu">MAIN MENU</button>
+      <div id="haptic-status" style="font-family:var(--font-m);font-size:9px;color:#556;letter-spacing:.08em;margin-top:10px;max-width:220px;line-height:1.5;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="result-screen">
+  <div id="res-eyebrow"></div>
+  <div id="res-grade"></div>
+  <div id="res-score">0</div>
+  <div id="res-sub"></div>
+  <div class="res-stats">
+    <div class="res-stat"><div class="l">Perfect</div><div class="v" id="rs-perfect" style="color:var(--slime)">0</div></div>
+    <div class="res-stat"><div class="l">Good</div><div class="v" id="rs-good" style="color:var(--fire)">0</div></div>
+    <div class="res-stat"><div class="l">Miss</div><div class="v" id="rs-miss" style="color:var(--blood)">0</div></div>
+    <div class="res-stat"><div class="l">Avg Timing</div><div class="v" id="rs-offset">—</div></div>
+    <div class="res-stat"><div class="l">Consistency</div><div class="v" id="rs-consist">—</div></div>
+    <div class="res-stat"><div class="l">Max Combo</div><div class="v" id="rs-combo" style="color:var(--cyan)">0</div></div>
+  </div>
+  <div class="res-coach" id="res-coach"></div>
+  <div class="res-newhigh" id="res-newhigh">★ NEW HIGH SCORE ★</div>
+  <div class="res-board" id="res-board">
+    <div class="res-board-title">Chapter Leaderboard · this device</div>
+    <div id="res-board-rows"></div>
+  </div>
+  <div class="res-cta">
+    <div class="res-cta-msg" id="res-cta-msg"></div>
+    <a href="https://whop.com/dr-ozi-1on1/" target="_blank" rel="noopener">Book a 1-on-1 with Dr. Ozi →</a>
+  </div>
+  <div class="res-acts">
+    <div class="res-btn" id="res-retry">↺ Retry</div>
+    <div class="res-btn" id="res-menu">Menu</div>
+    <div class="res-btn primary" id="res-next">Next →</div>
+  </div>
+</div>
+
+</div>
+<script>
+'use strict';
+const isMobile=window.innerWidth<600;
+// Real touch-capable-device check, separate from isMobile (which is a *layout*
+// breakpoint, not a device check — a resized desktop window under 600px would
+// wrongly qualify, and a phone in landscape over 600px would wrongly be
+// excluded). Haptics specifically should gate on actual touch hardware.
+const isTouchDevice=('ontouchstart' in window)||navigator.maxTouchPoints>0;
+
+// onTap: fires on touchend (no 300ms delay on mobile) OR click (desktop).
+// Prevents ghost clicks after touchend fires.
+function onTap(el,fn){
+  let touched=false;
+  el.addEventListener('touchend',e=>{
+    e.preventDefault();touched=true;fn(e);
+    setTimeout(()=>{touched=false;},600);
+  },{passive:false});
+  el.addEventListener('click',e=>{if(!touched)fn(e);});
+}
+
+// ═══════════════ AUDIO ═══════════════
+let actx=null;
+function A(){ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); return actx; }
+
+const CHORDS={
+  perfect:[261.63,329.63,369.99,392.00], // Lydian
+  good:[261.63,277.18,311.13],           // Phrygian
+  close:[261.63,311.13,369.99],          // Diminished
+  miss:[261.63,311.13,369.99]
+};
+function chord(type,dur=0.18,vol=0.14){
+  const c=A(),freqs=CHORDS[type]||CHORDS.perfect;
+  freqs.forEach((f,i)=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;
+    const t=c.currentTime,v=type==='miss'?vol*0.4/(i+1):vol/(i*0.3+1);
+    g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    o.start(t);o.stop(t+dur+0.05);
+    if(type==='miss')o.frequency.setTargetAtTime(f*0.6,t+0.05,0.08);
+  });
+}
+// Count-in: sharp woodblock-style (square+quick decay, high pitch)
+// Scheduled at an EXACT AudioContext time (sample-accurate) rather than "now" —
+// this is what lets the click track avoid drifting away from the note timeline.
+function countClickAt(time,n){
+  const c=A(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='square';
+  o.frequency.value=n===0?1400:1000; // GO! is higher
+  g.gain.setValueAtTime(0.18,time);g.gain.exponentialRampToValueAtTime(0.001,time+0.06);
+  o.start(time);o.stop(time+0.08);
+}
+// Metronome during play: soft sine, distinct from count-in. Also sample-accurate scheduled.
+function metroClickAt(time,strong){
+  const c=A(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='sine';
+  o.frequency.value=strong?520:440;
+  g.gain.setValueAtTime(0.10,time);g.gain.exponentialRampToValueAtTime(0.001,time+0.05);
+  o.start(time);o.stop(time+0.07);
+}
+
+// ═══════════════ NOTE DEFS ═══════════════
+const N={
+  whole:{sym:'○',symType:'whole',pie:'pie-i',beats:4,color:'#4AA68D',label:'Whole',desc:'4 beats'},
+  half:{sym:'♩',symType:'half',pie:'ha-lf',beats:2,color:'#4AA68D',label:'Half',desc:'2 beats'},
+  quarter:{sym:'♩',symType:'quarter',pie:'pie',beats:1,color:'#FF8500',label:'Quarter',desc:'1 beat'},
+  eighth:{sym:'♪',symType:'eighth',pie:'ap-ple',beats:.5,color:'#FF8500',label:'Eighth',desc:'½ beat'},
+  dotted:{sym:'♩.',symType:'quarter',pie:'pump-kin',beats:1.5,color:'#00E5FF',label:'Dotted ♩',desc:'1½ beats'},
+  triplet:{sym:'♪³',symType:'eighth',pie:'cho-co-late',beats:.667,color:'#B388FF',label:'Triplet',desc:'3 per 2 beats'},
+  qrest:{sym:'𝄽',symType:'qrest',pie:'(sh)',beats:1,color:'#555',label:'Quarter Rest',desc:'1 beat silent'},
+  erest:{sym:'𝄾',symType:'erest',pie:'(sh)',beats:.5,color:'#555',label:'Eighth Rest',desc:'½ beat silent'},
+};
+
+// ═══════════════ CHAPTERS ═══════════════
+const CH={
+  1:{id:1,name:'Whole & Half Notes',game:'float',eyebrow:'Chapter 01 · The Sustain',
+     notes:['whole','half'],cards:['whole','half'],
+     how:'Each note is a BAR — its width is how long it lasts. PRESS & HOLD when its front edge reaches the line, then RELEASE when its back edge clears the line. A whole note is held 4× longer than a quarter. You are physically playing the duration, not tapping.'},
+  2:{id:2,name:'Quarter & Eighth Notes',game:'drop',eyebrow:'Chapter 02 · The Drop',
+     notes:['quarter','eighth'],cards:['quarter','eighth'],
+     how:'Notes fall toward the line. TAP anywhere the instant a note crosses the green zone. The PIE word is your rhythm cue — "pie" is one beat, "ap-ple" is two fast taps.'},
+  3:{id:3,name:'Counting — 1 e + a',game:'gates',eyebrow:'Chapter 03 · The Drum Machine',
+     notes:['quarter','eighth'],cards:['quarter','eighth'],
+     how:'Each beat scrolls in as 4 cells: 1, e, +, a. Lit orange cells need a TAP the instant they cross the line. Dim dashed cells are empty — read past them, no input needed. Tap the pattern, not the silence.'},
+  4:{id:4,name:'Dotted Notes & Triplets',game:'pulse',eyebrow:'Chapter 04 · The Pulse',
+     notes:['dotted','triplet','quarter'],cards:['dotted','triplet'],
+     how:'Dots scroll toward the line — TAP each one the instant it crosses. Triplets arrive as 3 dots grouped under a bracket, evenly spaced across 2 beats: you SEE the 3-against-straight-time feel, not just hear it.'},
+  5:{id:5,name:'Rests — The Silence',game:'runner',eyebrow:'Chapter 05 · The Void',
+     notes:['quarter','eighth','qrest','erest','triplet'],cards:['quarter','qrest','eighth','erest','triplet'],
+     how:'The character auto-runs. TAP to JUMP each note fence as it arrives. When a REST (dark gap) comes, DO NOT TAP — stay grounded and run straight through the silence. Triplet fences arrive in tight groups of 3 — jump each one on its own beat. Jumping into a rest makes you stumble.'},
+  6:{id:6,name:'The Conductor — Master',game:'conductor',eyebrow:'Chapter 06 · The Conductor · MASTER',
+     notes:['quarter','eighth','qrest','erest','triplet'],cards:['quarter','eighth','qrest','triplet'],
+     how:'Guitar Hero, but you have earned it. Four columns — one per beat of the bar. Notes FALL toward the glowing pads: TAP the column when a note lands on its pad. Let rests fall in silence. HOLD the long bars for their full length. Round 3 turns column 3 into triplets — feel 3-against-4 for real.'},
+};
+
+// Universal note glyph — inline SVG instead of Unicode musical symbols (𝅝 𝅗𝅥 𝄽 𝄾
+// are Supplementary-Plane characters most mobile fonts don't cover at all, which
+// is why note text was going invisible on phones). SVG renders identically
+// everywhere, on every device, every font situation.
+function noteGlyph(symType,color,size){
+  size=size||20;color=color||'#fff';
+  const s=`width="${size}" height="${size}" viewBox="0 0 24 24"`;
+  if(symType==='whole')
+    return `<svg ${s}><ellipse cx="12" cy="16" rx="7" ry="5" fill="none" stroke="${color}" stroke-width="2.6" transform="rotate(-18 12 16)"/></svg>`;
+  if(symType==='half')
+    return `<svg ${s}><ellipse cx="9" cy="18" rx="5.5" ry="4" fill="none" stroke="${color}" stroke-width="2.4" transform="rotate(-18 9 18)"/><rect x="13.5" y="2" width="2.2" height="17" fill="${color}"/></svg>`;
+  if(symType==='quarter')
+    return `<svg ${s}><ellipse cx="9" cy="18" rx="5.5" ry="4" fill="${color}" transform="rotate(-18 9 18)"/><rect x="13.5" y="2" width="2.2" height="17" fill="${color}"/></svg>`;
+  if(symType==='eighth')
+    return `<svg ${s}><ellipse cx="9" cy="18" rx="5.5" ry="4" fill="${color}" transform="rotate(-18 9 18)"/><rect x="13.5" y="2" width="2.2" height="17" fill="${color}"/><path d="M15.7 2 Q22 5 21 11 Q19 8 15.7 9.5 Z" fill="${color}"/></svg>`;
+  if(symType==='triplet')
+    return `<svg ${s}><ellipse cx="9" cy="18" rx="5.5" ry="4" fill="${color}" transform="rotate(-18 9 18)"/><rect x="13.5" y="2" width="2.2" height="17" fill="${color}"/><path d="M15.7 2 Q22 5 21 11 Q19 8 15.7 9.5 Z" fill="${color}"/><text x="17" y="7" font-size="9" font-weight="700" fill="${color}">3</text></svg>`;
+  if(symType==='sixteenth')
+    return `<svg ${s}><ellipse cx="9" cy="18" rx="5.5" ry="4" fill="${color}" transform="rotate(-18 9 18)"/><rect x="13.5" y="2" width="2.2" height="17" fill="${color}"/><path d="M15.7 2 Q22 5 21 11 Q19 8 15.7 9.5 Z" fill="${color}"/><path d="M15.7 6 Q22 9 21 15 Q19 12 15.7 13.5 Z" fill="${color}"/></svg>`;
+  if(symType==='qrest')
+    // A small silhouette figure, echoing the character/void aesthetic — silence
+    // rendered as "the character isn't there," not an abstract squiggle.
+    return `<svg ${s}><path d="M12 3 C16 3 18 6.5 18 10 C18 13 16.5 15 15 15.5 L16 20 L8 20 L9 15.5 C7.5 15 6 13 6 10 C6 6.5 8 3 12 3 Z" fill="${color}" opacity=".85"/><circle cx="9.7" cy="9.5" r="1.1" fill="#fff" opacity=".6"/><circle cx="14.3" cy="9.5" r="1.1" fill="#fff" opacity=".6"/></svg>`;
+  if(symType==='erest')
+    // Same silhouette, smaller and fainter — half the silence.
+    return `<svg ${s}><path d="M12 6 C14.8 6 16.2 8.4 16.2 10.6 C16.2 12.4 15.3 13.6 14.4 14 L15 17 L9 17 L9.6 14 C8.7 13.6 7.8 12.4 7.8 10.6 C7.8 8.4 9.2 6 12 6 Z" fill="${color}" opacity=".6"/><circle cx="10.5" cy="10.2" r=".8" fill="#fff" opacity=".5"/><circle cx="13.5" cy="10.2" r=".8" fill="#fff" opacity=".5"/></svg>`;
+  // fallback: plain filled dot
+  return `<svg ${s}><circle cx="12" cy="12" r="5" fill="${color}"/></svg>`;
+}
+
+// ═══════════════ STATE ═══════════════
+const G={bpm:80,chapter:1,selCh:1,score:0,misses:0,combo:0,maxCombo:0,lastMult:1,
+  hits:{perfect:0,good:0,close:0,miss:0},offsets:[],totalNotes:0,
+  active:false,raf:null,metro:null,handlers:[],audioStart:0,
+  paused:false,pauseAt:0,curChapter:null,calibrationMs:0,hypeBars:[]};
+// ═══════════════ SHARED CONSISTENCY HELPERS ═══════════════
+// ONE speed for every scrolling/falling chapter, so the game FEELS like one game.
+// Chapters with long bars (Ch1) use a fixed fraction of this, never their own formula.
+function scrollSpeed(){return Math.max(170,G.bpm*2.6);}
+// Haptic feedback — mobile only, silently no-ops elsewhere (iOS Safari ignores it).
+// Haptic feedback — real touch devices only (see isTouchDevice above). Silently
+// no-ops on iOS Safari: Apple has never implemented the Vibration API in
+// WebKit, on any iOS version, for any website — this is a hard platform
+// restriction with no code-side workaround. Works on Android Chrome/Firefox
+// as long as (a) the device's own haptics/vibration OS setting is on, and
+// (b) the call happens inside a direct user-gesture chain (tap → handler →
+// buzz, synchronous, no setTimeout in between) — every per-hit call site
+// here satisfies that. navigator.vibrate() returns true/false — capture it
+// once so there's an actual diagnostic instead of silent uncertainty.
+let hapticDiagnosticLogged=false;
+function buzz(pattern){
+  if(!isTouchDevice)return;
+  if(!navigator.vibrate){
+    if(!hapticDiagnosticLogged){hapticDiagnosticLogged=true;console.log('[haptics] navigator.vibrate is not available on this browser — this is a platform limitation (guaranteed on iOS Safari), not a bug in the game.');}
+    return;
+  }
+  try{
+    const accepted=navigator.vibrate(pattern);
+    if(!hapticDiagnosticLogged){
+      hapticDiagnosticLogged=true;
+      console.log('[haptics] navigator.vibrate exists and was called. Browser accepted the call:',accepted,'— if this is true but you still feel nothing, the device\'s own OS-level vibration/haptics setting is very likely turned off.');
+    }
+  }catch(e){
+    if(!hapticDiagnosticLogged){hapticDiagnosticLogged=true;console.log('[haptics] navigator.vibrate threw an error:',e.message);}
+  }
+}
+// Every note eases in on spawn instead of popping into existence.
+function fadeInNote(el){el.style.opacity='0';el.style.transition='opacity .22s';setTimeout(()=>{el.style.opacity='1';},16);}
+
+function beatMs(){return 60000/G.bpm;}
+// THE METRONOME-DRIFT FIX: the in-game metronome always clicks on whole beats
+// starting at G.audioStart (beat 0, 1, 2, 3...). Each chapter used to start its
+// note timeline at Math.max(BMS*2, TRAVEL+BMS) — a value derived from travel
+// speed/pixels, almost never a whole number of beats. That fractional offset
+// then propagated through every note after it, so the entire note stream sat
+// BETWEEN the audible clicks instead of on them — you were forced to tap on
+// the "e" or "and" to match what you saw, even though your ears heard the "1".
+// quantizeLead rounds any minimum lead-in UP to the next whole beat, so note 1
+// always lands exactly on a click and the whole stream stays on the grid.
+function quantizeLead(bms,minMs){return Math.ceil(minMs/bms-1e-9)*bms;}
+// BAR-ALIGNED variant: for chapters that group notes into labeled 4-beat bars
+// (Ch5's "BEAT 1/2/3/4" cells, Ch6's 4-lane rounds), quantizeLead alone isn't
+// enough — it snaps to the nearest single BEAT, but the metronome's loud
+// downbeat click only fires once every 4 beats (beatIdx%4===0). If the note
+// stream's start doesn't ALSO land on that 4-beat boundary, the visually
+// labeled "beat 1" can silently land on a weak click instead of the downbeat
+// — a real, provable "metronome feels offbeat" bug, confirmed in Ch5.
+function quantizeLeadBar(bms,minMs){return Math.ceil(minMs/(bms*4)-1e-9)*bms*4;}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5);}
+// SINGLE SOURCE OF TRUTH FOR TIME: every chapter's note timeline AND the audible
+// metronome both read from the AudioContext clock, anchored to G.audioStart (set
+// by countIn at the exact scheduled downbeat). This is what keeps the click track
+// and the scored note positions from drifting apart over a round.
+//
+// CRITICAL LATENCY FIX: AudioContext.currentTime is when audio is *scheduled*, but
+// there's a hardware/OS buffer (baseLatency + outputLatency) before sound actually
+// reaches the speakers — often 20-100ms, worse on Bluetooth. A player taps in sync
+// with what they HEAR (scheduled time + latency), so if we judge against the raw
+// scheduled clock, every on-time tap reads as "late" by exactly that latency. We
+// subtract the output latency (plus an optional user calibration nudge) so "now"
+// means when the sound hit the player's ears.
+//
+// calibrationMs default is 0 — trust the browser's own reported baseLatency/
+// outputLatency rather than an unverified fixed offset. A previous build set this
+// to -50, which SUBTRACTS a negative number from gameNow() (i.e. ADDS 50ms of
+// forward bias). On devices where the browser under-reports hardware latency as
+// ~0 (common on mobile Safari/Chrome), that -50 made every on-time tap register
+// as 50ms late — a real, consistent, cross-chapter delay, which is exactly the
+// bug that was reported. If a genuine device-specific offset is ever needed
+// again, expose it as an explicit, visible in-game control — never bake in an
+// unverified guess as the silent default.
+function audioLatencyMs(){
+  const c=A();
+  const base=(c.baseLatency||0);
+  const out=(c.outputLatency||0);
+  return (base+out)*1000 + G.calibrationMs;
+}
+function gameNow(){return (A().currentTime-G.audioStart)*1000 - audioLatencyMs();}
+
+// ═══════════════ CHARACTER ═══════════════
+// LIMBO-style silhouette: legs and arms are painted first, then the torso and
+// head are painted on top with deep overlap at every joint — since it's a flat
+// silhouette with a single fill color, generous overlap reads as one continuous
+// body with no seams, rather than separate stitched-together pieces.
+function charSVG(id,scale){
+  scale=scale||1;const w=64*scale,h=102*scale;
+  return `<svg id="${id}" width="${w}" height="${h}" viewBox="0 0 64 102" style="overflow:visible">
+    <ellipse cx="31" cy="97" rx="16" ry="4" fill="#000" opacity=".4"/>
+    <g fill="#070907">
+      <path d="M20 52 L16 95 L25 95 L28 58 L28 52 Z"/>
+      <path d="M42 52 L46 95 L37 95 L34 58 L34 52 Z"/>
+      <path d="M19 28 Q10 33 9 50 L16 52 Q17 39 23 32 Z"/>
+      <path d="M43 28 Q52 33 53 50 L46 52 Q45 39 39 32 Z"/>
+      <path d="M18 22 Q17 16 25 14 L37 14 Q45 16 44 22 L43 58 Q31 63 19 58 Z"/>
+      <circle cx="31" cy="14" r="13.5"/>
+    </g>
+    <circle cx="26.5" cy="14" r="2.4" fill="#fff" id="${id}-el" style="filter:drop-shadow(0 0 6px #fff)"/>
+    <circle cx="35.5" cy="14" r="2.4" fill="#fff" id="${id}-er" style="filter:drop-shadow(0 0 6px #fff)"/>
+  </svg>`;
+}
+function eyes(id){return [document.getElementById(id+'-el'),document.getElementById(id+'-er')];}
+function charReact(type,id){
+  id=id||'gc';const[el,er]=eyes(id);if(!el)return;
+  const set=(r,fill,glow)=>{[el,er].forEach(e=>{e.r.baseVal.value=r;e.style.fill=fill;e.style.filter='drop-shadow(0 0 '+glow+'px '+fill+')';});};
+  if(type==='perfect'){set(3.6,'#fff',14);setTimeout(()=>set(2.4,'#fff',6),120);}
+  else if(type==='good'){set(3,'#4AA68D',10);setTimeout(()=>set(2.4,'#fff',5),200);}
+  else if(type==='miss'){set(1.2,'#ff3838',9);setTimeout(()=>set(2.4,'#fff',5),350);}
+  else if(type==='dark'){set(.6,'#222',0);setTimeout(()=>set(2.4,'#fff',5),450);}
+  else if(type==='combo'){
+    const m=comboMult();const col=comboColor(m);
+    const r=3+Math.min(3,(m/32)*3),glow=14+Math.min(22,(m/32)*22);
+    set(r,col,glow);setTimeout(()=>set(2.4,'#fff',6),300);
+  }
+}
+// Character hit-bounce — a real spring animation (see .hitbounce/@keyframes
+// charHitBounce), replacing the old pattern of instantly setting scale(1.15)
+// then a setTimeout hard-reverting it with zero easing in between, which is
+// exactly what read as "robotic."
+function bounceChar(id){
+  id=id||'gc';
+  const el=document.getElementById(id);if(!el)return;
+  el.classList.remove('hitbounce');void el.offsetWidth;el.classList.add('hitbounce');
+}
+function blinkEyes(id){
+  const[el,er]=eyes(id);if(!el)return;
+  const r=el.r.baseVal.value;
+  [el,er].forEach(e=>e.r.baseVal.value=0.5);
+  setTimeout(()=>[el,er].forEach(e=>e.r.baseVal.value=r),110);
+}
+// Eyes bloom progressively larger the longer a held note has been "consumed"
+// (Chapter 1). intensity is 0..1+ (how far into the hold, can overshoot slightly).
+function charEat(id,intensity){
+  const[el,er]=eyes(id);if(!el)return;
+  const p=Math.max(0,Math.min(1.3,intensity));
+  const r=2.4+p*3.2,glow=6+p*18;
+  [el,er].forEach(e=>{e.r.baseVal.value=r;e.style.filter=`drop-shadow(0 0 ${glow}px #fff)`;});
+}
+
+// ═══════════════ BPM DIAL ═══════════════
+const BPMLV=[{max:69,l:'BEGINNER',c:'#4AA68D'},{max:89,l:'DEVELOPING',c:'#4AA68D'},{max:109,l:'INTERMEDIATE',c:'#FF8500'},{max:129,l:'ADVANCED',c:'#FF8500'},{max:160,l:'EXPERT',c:'#FF3838'}];
+function updBpm(){const info=BPMLV.find(x=>G.bpm<=x.max)||BPMLV[4];document.getElementById('bpm-num').textContent=G.bpm;const lv=document.getElementById('bpm-lvl');lv.textContent=info.l;lv.style.color=info.c;}
+function setBpm(v){G.bpm=Math.max(40,Math.min(160,Math.round(v)));updBpm();}
+function setCalib(v){G.calibrationMs=Math.max(-150,Math.min(150,Math.round(v)));updCalib();}
+function updCalib(){
+  const el=document.getElementById('calib-val');if(!el)return;
+  const v=G.calibrationMs;
+  el.textContent=v===0?'auto':(v>0?'+':'')+v+'ms';
+}
+(function(){
+  const d=document.getElementById('bpm-num');let dY=null,dS=null;
+  d.addEventListener('mousedown',e=>{dY=e.clientY;dS=G.bpm;e.preventDefault();});
+  window.addEventListener('mousemove',e=>{if(dY!==null)setBpm(dS-(e.clientY-dY)*0.3);});
+  window.addEventListener('mouseup',()=>dY=null);
+  d.addEventListener('touchstart',e=>{dY=e.touches[0].clientY;dS=G.bpm;},{passive:false});
+  d.addEventListener('touchmove',e=>{e.preventDefault();if(dY!==null)setBpm(dS-(e.touches[0].clientY-dY)*0.3);},{passive:false});
+  d.addEventListener('touchend',()=>dY=null);
+  d.addEventListener('wheel',e=>{e.preventDefault();setBpm(G.bpm-(e.deltaY>0?1:-1));},{passive:false});
+  onTap(document.getElementById('bpm-minus'),()=>setBpm(G.bpm-2));
+  onTap(document.getElementById('bpm-plus'),()=>setBpm(G.bpm+2));
+  updBpm();
+})();
+
+// ═══════════════ NAV ═══════════════
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+// Build chapter cards
+(function(){
+  const grid=document.getElementById('ch-grid');
+  const gname={1:'Sustain',2:'Drop',3:'Drum Machine',4:'Pulse',5:'Void',6:'Conductor'};
+  const iconType={1:'whole',2:'quarter',3:null,4:'triplet',5:'qrest',6:null};
+  const hint={
+    1:'Press & hold for note length',
+    2:'Catch falling notes at the line',
+    3:'Hit beats, silence the rests',
+    4:'Tap every dot on the beat',
+    5:'Jump over fences, dodge rests',
+    6:'4 falling columns · taps + holds'
+  };
+  Object.values(CH).forEach(ch=>{
+    const c=document.createElement('div');c.className='ch-card'+(ch.id===1?' sel':'');c.dataset.ch=ch.id;
+    const col=ch.id<=2?'var(--fire)':ch.id<=4?'var(--cyan)':'var(--slime)';
+    const colHex=ch.id<=2?'#FF8500':ch.id<=4?'#00E5FF':'#4AA68D';
+    const iconHTML=iconType[ch.id]?noteGlyph(iconType[ch.id],colHex,28):
+      (ch.id===3?`<span style="font-family:var(--font-m);font-size:20px;font-weight:700;color:${col}">1e+a</span>`:
+      `<span style="font-family:var(--font-m);font-size:22px;color:${col}">♫</span>`);
+    c.innerHTML=`<div class="cn">CH 0${ch.id}</div><div class="ci" style="color:${col}">${iconHTML}</div><div class="ct">${ch.name.split('&')[0].trim().replace('Whole ','').replace('Quarter ','').replace('Dotted ','')}</div><div class="cg">${gname[ch.id]}</div><div class="cb">${hint[ch.id]}</div>`;
+    onTap(c,()=>{document.querySelectorAll('.ch-card').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');G.selCh=ch.id;});
+    grid.appendChild(c);
+  });
+})();
+// Populate a building layer with lit windows at fixed procedural positions.
+// Window brightness reacts to the current hype/combo tier via --wlit.
+const BUILDING_WINDOWS=[[4.94,64.79],[7.21,72.05],[7.66,57.48],[22.95,42.64],[21.25,75.89],[27.38,59.6],[26.95,73.45],[30.05,81.34],[47.62,77.44],[48.36,59.62],[45.84,75.51],[55.97,80.51],[55.71,88.89],[58.97,81.47],[72.38,81.08],[72.34,62.55],[81.32,88.82],[80.45,79.19],[79.56,73.69],[91.25,69.93]];
+function populateBuildingWindows(id){
+  const host=document.getElementById(id);if(!host||host.dataset.populated)return;
+  host.dataset.populated='1';
+  BUILDING_WINDOWS.forEach(([wx,wy],i)=>{
+    const el=document.createElement('div');el.className='building-window';
+    el.style.left=wx+'%';el.style.top=wy+'%';
+    const base=(0.15+Math.random()*0.25);
+    el.dataset.base=base.toFixed(2);
+    el.style.setProperty('--wlit',base.toFixed(2));
+    if(Math.random()<0.15)el.style.animation=`emberFlicker ${1.5+Math.random()*2}s ease-in-out infinite alternate`;
+    host.appendChild(el);
+  });
+}
+populateBuildingWindows('buildings-title');
+// Title character
+document.getElementById('title-char-slot').innerHTML='<div style="margin-bottom:28px">'+charSVG('tc',1.1)+'</div>';
+setInterval(()=>blinkEyes('tc'),2800+Math.random()*2200);
+
+onTap(document.getElementById('start-btn'),()=>{A();G.chapter=G.selCh;showTut(CH[G.chapter]);});
+onTap(document.getElementById('tut-back'),()=>show('title-screen'));
+onTap(document.getElementById('tut-play'),()=>{A();startGame();});
+onTap(document.getElementById('res-retry'),()=>{A();startGame();});
+onTap(document.getElementById('res-menu'),()=>show('title-screen'));
+onTap(document.getElementById('res-next'),()=>{G.chapter=Math.min(6,G.chapter+1);G.selCh=G.chapter;showTut(CH[G.chapter]);});
+setupPauseControls();
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&G.active){e.preventDefault();G.paused?resumeGame():pauseGame();}
+});
+
+// ═══════════════ TUTORIAL ═══════════════
+function showTut(ch){
+  document.getElementById('tut-eyebrow').textContent=ch.eyebrow;
+  document.getElementById('tut-title').textContent=ch.name;
+  const tn=document.getElementById('tut-notes');tn.innerHTML='';
+  ch.cards.forEach(k=>{const n=N[k];const el=document.createElement('div');el.className='tut-note';
+    el.innerHTML=`<div class="s">${noteGlyph(n.symType,n.color,30)}</div><div class="i"><div class="n">${n.label}</div><div class="b">${n.desc} · "${n.pie}"</div></div>`;tn.appendChild(el);});
+  document.getElementById('tut-how').textContent=ch.how;
+  // The "gif": a looping finger animation matching this chapter's actual input —
+  // press-and-hold for the duration mechanic, quick tap for everything else.
+  const isHold=ch.game==='float';
+  document.getElementById('tut-demo').className='tut-demo '+(isHold?'mode-hold':'mode-tap');
+  document.getElementById('tut-demo-lbl').textContent=isHold?'press & hold':'tap';
+  show('tutorial-screen');
+}
+
+// ═══════════════ SHARED GAME UTILITIES ═══════════════
+function resetState(){
+  G.score=0;G.misses=0;G.combo=0;G.maxCombo=0;G.lastMult=1;G.hypeBars=[];
+  G.hits={perfect:0,good:0,close:0,miss:0};G.offsets=[];G.totalNotes=0;
+  G.active=false;
+  if(G.raf){cancelAnimationFrame(G.raf);G.raf=null;}
+  if(G.metro){clearInterval(G.metro);G.metro=null;}
+  G.handlers.forEach(h=>h());G.handlers=[];
+}
+function updHUD(){
+  document.getElementById('hud-score').textContent=G.score;
+  document.getElementById('hud-miss').textContent=G.misses;
+  const cb=document.getElementById('hud-combo');
+  const m=comboMult();
+  cb.textContent=m>1?'×'+m:'';
+  cb.style.color=comboColor(m);
+  updateHypeBars();
+}
+function comboMult(){
+  if(G.combo>=200)return 200;
+  if(G.combo>=100)return 100;
+  if(G.combo>=64)return 64;
+  if(G.combo>=32)return 32;
+  if(G.combo>=16)return 16;
+  if(G.combo>=8)return 8;
+  if(G.combo>=4)return 4;
+  if(G.combo>=2)return 2;
+  return 1;
+}
+// A color for each hype tier — climbs from brand-teal through cyan, fire, gold,
+// and finally a golden Super-Saiyan white-gold at the top two tiers.
+function comboColor(m){
+  if(m>=200)return '#FFF6C8';  // SSJ2 — near-white gold, blinding
+  if(m>=100)return '#FFE066';  // SSJ — golden aura
+  if(m>=64)return '#FFFFFF';   // MAX POWER — pure white-out
+  if(m>=32)return '#FFD447';   // white-hot gold
+  if(m>=16)return '#FF8500';   // fire orange
+  if(m>=8) return '#FF8500';
+  if(m>=4) return '#00E5FF';   // cyan
+  return '#4AA68D';            // teal
+}
+// Is the player currently in a "transformed" state? Drives character glow,
+// storm/fire atmosphere, and the golden vignette.
+function isSSJ(m){return m>=100;}
+
+// ═══════════════ HOLD DRONE — bass swell while sustaining a note (Chapter 1) ═══════════════
+// A low sawtooth through a lowpass filter, gain and brightness both rising with how
+// far into the hold you are. Gives sustained notes real weight — you FEEL the hold
+// building, not just watch a bar shrink.
+let droneOsc=null,droneGain=null,droneFilter=null;
+function startDrone(){
+  stopDrone();
+  const c=A();
+  droneOsc=c.createOscillator();droneGain=c.createGain();droneFilter=c.createBiquadFilter();
+  droneOsc.type='sawtooth';droneOsc.frequency.value=55;
+  droneFilter.type='lowpass';droneFilter.frequency.value=160;droneFilter.Q.value=0.7;
+  droneOsc.connect(droneFilter);droneFilter.connect(droneGain);droneGain.connect(c.destination);
+  droneGain.gain.setValueAtTime(0,c.currentTime);
+  droneGain.gain.linearRampToValueAtTime(0.09,c.currentTime+0.1);
+  droneOsc.start();
+}
+function swellDrone(progress){ // progress: 0 (just pressed) → 1+ (full length held)
+  if(!droneGain||!droneFilter)return;
+  const c=A(),p=Math.max(0,Math.min(1.15,progress));
+  droneGain.gain.linearRampToValueAtTime(0.08+0.24*p,c.currentTime+0.06);
+  droneFilter.frequency.linearRampToValueAtTime(160+680*p,c.currentTime+0.06);
+}
+function stopDrone(){
+  if(droneGain){
+    const c=A();
+    droneGain.gain.cancelScheduledValues(c.currentTime);
+    droneGain.gain.setValueAtTime(droneGain.gain.value,c.currentTime);
+    droneGain.gain.linearRampToValueAtTime(0,c.currentTime+0.14);
+  }
+  if(droneOsc){const o=droneOsc;setTimeout(()=>{try{o.stop();}catch(e){}},170);}
+  droneOsc=null;droneGain=null;droneFilter=null;
+}
+
+// A quiet 'that didn't count' tick for inputs that matched nothing.
+function whiffTick(){
+  const c=A(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='square';o.frequency.value=180;
+  const t0=c.currentTime;g.gain.setValueAtTime(0.04,t0);g.gain.exponentialRampToValueAtTime(0.001,t0+0.035);
+  o.start(t0);o.stop(t0+0.04);
+}
+
+// ═══════════════ ATMOSPHERE & JUICE ═══════════════
+let moteTimer=null,titleMoteTimer=null;
+function spawnMoteInto(atmos,pausedCheck){
+  if(pausedCheck&&pausedCheck())return;
+  const m=document.createElement('div');m.className='mote';
+  const size=1+Math.random()*3;
+  const x=Math.random()*100;
+  const dur=8+Math.random()*10;
+  const mx=(Math.random()-0.5)*80;
+  const my=-(100+Math.random()*160);
+  m.style.cssText=`left:${x}%;bottom:-10px;width:${size}px;height:${size}px;--mx:${mx}px;--my:${my}px;animation:moteFloat ${dur}s linear forwards;`;
+  atmos.appendChild(m);
+  setTimeout(()=>m.remove(),dur*1000+100);
+}
+function startMotes(){
+  const atmos=document.getElementById('atmos');if(!atmos)return;
+  stopMotes();
+  const interval=window.innerWidth<600?800:420; // half as many on mobile
+  moteTimer=setInterval(()=>spawnMoteInto(atmos,()=>G.paused),interval);
+}
+function stopMotes(){if(moteTimer){clearInterval(moteTimer);moteTimer=null;}
+  const atmos=document.getElementById('atmos');if(atmos)atmos.querySelectorAll('.mote').forEach(m=>m.remove());}
+function startTitleMotes(){
+  const atmos=document.getElementById('atmos-title');if(!atmos)return;
+  if(titleMoteTimer)return;
+  const interval=window.innerWidth<600?1200:650;
+  titleMoteTimer=setInterval(()=>spawnMoteInto(atmos,null),interval);
+}
+startTitleMotes();
+// Escalating combo aura + whole-screen "hype" brightening. As the multiplier
+// climbs the inner glow intensifies AND the whole game screen lifts in brightness/
+// saturation, so a big streak physically energizes the picture. Peaks at ×32.
+let stormTimer=null,sparkTimer=null;
+// Storm intensity — GATED to actual hype/combo, not ambient. This is meant to
+// be a reward for building a streak, not a constant background distraction.
+// Zero below ×8; climbs from there to full intensity by ×200.
+function stormIntensity(m){
+  if(m<8)return 0;
+  if(m>=200)return 1;
+  return Math.min(1,(m-8)/(200-8));
+}
+function updateAura(){
+  const aura=document.getElementById('atmos-aura');
+  const hv=document.getElementById('hype-vignette');
+  const m=comboMult();
+  if(aura){
+    if(m<=1){aura.style.opacity='0';}
+    else{
+      const c=comboColor(m);
+      const s=m>=100?0.55:m>=32?0.5:m>=16?0.42:m>=8?0.34:m>=4?0.24:0.14;
+      aura.style.setProperty('--aura-color',hexA(c,s));
+      aura.style.opacity='1';
+    }
+  }
+  // COLORED VIGNETTE — the power-up indicator. Its edge color and intensity climb
+  // with the combo tier, and at MAX/SSJ it pulses. Consistent across all chapters.
+  if(hv){
+    if(m<=1){hv.style.opacity='0';hv.classList.remove('maxed');}
+    else{
+      const c=comboColor(m);
+      const s=m>=200?0.7:m>=100?0.62:m>=64?0.5:m>=32?0.4:m>=16?0.3:m>=8?0.22:m>=4?0.14:0.08;
+      hv.style.setProperty('--hv-color',hexA(c,s));
+      hv.style.opacity='1';
+      hv.classList.toggle('maxed',m>=64);
+    }
+  }
+  // SUPER SAIYAN — character aura + storm/fire atmosphere, now BUILDING from
+  // ×16 all the way to full transformation at ×100/×200, instead of jumping
+  // straight from "nothing" to "everything."
+  const gc=document.getElementById('gc');
+  const intensity=stormIntensity(m);
+  if(gc){
+    gc.classList.toggle('warming',m>=16&&m<100);
+    gc.classList.toggle('ssj',m>=100&&m<200);
+    gc.classList.toggle('ssj2',m>=200);
+    gc.style.setProperty('--warm',intensity.toFixed(2));
+  }
+  const treesFar=document.querySelector('.atmos-trees-far');
+  if(treesFar){
+    treesFar.classList.toggle('ablaze',intensity>0);
+    treesFar.style.setProperty('--blaze',intensity.toFixed(2));
+  }
+  // Building windows brighten with the hype tier — the ruined city lights up
+  // as the run builds.
+  const bwin=document.getElementById('buildings-game');
+  if(bwin){
+    const lift=0.15+intensity*0.7;
+    bwin.querySelectorAll('.building-window').forEach(w=>{
+      const base=parseFloat(w.dataset.base)||0.25;
+      w.style.setProperty('--wlit',Math.min(1,base+lift*0.5).toFixed(2));
+    });
+  }
+  if(intensity>0){startStorm(intensity);} else {stopStorm();}
+}
+let currentStormIntensity=0;
+function startStorm(intensity){
+  currentStormIntensity=intensity;
+  if(!stormTimer){
+    const tick=()=>{
+      if(!G.active){stormTimer=setTimeout(tick,500);return;}
+      const f=document.getElementById('storm-flash');
+      if(f&&Math.random()<0.25+currentStormIntensity*0.5){
+        f.classList.remove('strike');void f.offsetWidth;f.classList.add('strike');
+        screenShake();thunderSound(currentStormIntensity);
+        buzz([10,20,10]);
+      }
+      // strike frequency scales with intensity: ~3.2s at low, ~0.7s at max
+      const nextIn=3200-currentStormIntensity*2200+Math.random()*700;
+      stormTimer=setTimeout(tick,nextIn);
+    };
+    stormTimer=setTimeout(tick,400);
+  }
+  if(!sparkTimer){
+    sparkTimer=setInterval(()=>{
+      if(!G.active)return;
+      if(Math.random()<0.3+currentStormIntensity*0.7)spawnSpark(currentStormIntensity);
+      if(Math.random()<0.08+currentStormIntensity*0.7)spawnEmber();
+    },130);
+  }
+}
+function stopStorm(){
+  currentStormIntensity=0;
+  if(stormTimer){clearTimeout(stormTimer);stormTimer=null;}
+  if(sparkTimer){clearInterval(sparkTimer);sparkTimer=null;}
+}
+function spawnSpark(intensity){
+  const cw=document.querySelector('#gc')?.closest('div');
+  const stage=document.getElementById('stage');if(!stage||!cw)return;
+  const rect=cw.getBoundingClientRect(),stageRect=stage.getBoundingClientRect();
+  const el=document.createElement('div');el.className='ssj-spark';
+  const x=rect.left-stageRect.left+rect.width/2+(Math.random()-0.5)*rect.width;
+  const y=rect.top-stageRect.top+rect.height*0.6;
+  const size=2+intensity*2.5;
+  el.style.cssText=`left:${x}px;top:${y}px;width:${size}px;height:${size}px;--sx:${(Math.random()-0.5)*(30+intensity*30)}px;animation:sparkRise ${0.5+Math.random()*0.3}s ease-out forwards;`;
+  stage.appendChild(el);setTimeout(()=>el.remove(),900);
+}
+function spawnEmber(){
+  const stage=document.getElementById('stage');if(!stage)return;
+  const el=document.createElement('div');el.className='ember';
+  const x=Math.random()*stage.offsetWidth,y=stage.offsetHeight*(0.75+Math.random()*0.2);
+  el.style.cssText=`left:${x}px;top:${y}px;--ex:${(Math.random()-0.5)*30}px;animation:emberRise ${1.2+Math.random()*0.6}s linear forwards;`;
+  stage.appendChild(el);setTimeout(()=>el.remove(),2000);
+}
+// THUNDER — a synthesized low rumble burst (filtered noise), not just a visual
+// flash. Volume/brightness scale with storm intensity so it builds from a
+// distant rumble to a genuine crack at max combo.
+let thunderNoiseBuffer=null;
+function thunderSound(intensity){
+  const c=A();
+  if(!thunderNoiseBuffer){
+    const len=c.sampleRate*1.2;
+    thunderNoiseBuffer=c.createBuffer(1,len,c.sampleRate);
+    const d=thunderNoiseBuffer.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,1.6);
+  }
+  const src=c.createBufferSource();src.buffer=thunderNoiseBuffer;
+  const filt=c.createBiquadFilter();filt.type='lowpass';
+  filt.frequency.value=180+intensity*260;
+  const g=c.createGain();
+  g.gain.value=0.06+intensity*0.16;
+  src.connect(filt);filt.connect(g);g.connect(c.destination);
+  src.start();
+}
+// Small helper: hex "#RRGGBB" + alpha 0..1 → "rgba(r,g,b,a)"
+function hexA(hex,a){
+  const n=parseInt(hex.slice(1),16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+}
+// Per-hit impact: colored screen flash + shake + a small radial particle burst.
+function screenFlash(color){
+  const f=document.getElementById('atmos-flash');if(!f)return;
+  f.style.setProperty('--flash-color',color);
+  f.classList.remove('fire');void f.offsetWidth;f.classList.add('fire');
+}
+function screenShake(){
+  const gs=document.getElementById('game-screen');if(!gs)return;
+  gs.classList.remove('shake');void gs.offsetWidth;gs.classList.add('shake');
+}
+function particleBurst(x,y,color,count=10){
+  const stage=document.getElementById('stage');if(!stage)return;
+  for(let i=0;i<count;i++){
+    const p=document.createElement('div');p.className='burst';
+    const ang=(Math.PI*2*i)/count+Math.random()*0.5;
+    const dist=30+Math.random()*45;
+    p.style.cssText=`left:${x}px;top:${y}px;background:${color};box-shadow:0 0 8px ${color};--bx:${Math.cos(ang)*dist}px;--by:${Math.sin(ang)*dist}px;animation:burstOut .5s ease-out forwards;`;
+    stage.appendChild(p);
+    setTimeout(()=>p.remove(),520);
+  }
+}
+function shockwave(x,y,color){
+  const stage=document.getElementById('stage');if(!stage)return;
+  const s=document.createElement('div');s.className='shockwave';
+  s.style.cssText=`left:${x}px;top:${y}px;--sc:${color};animation:shockOut .45s ease-out forwards;`;
+  stage.appendChild(s);setTimeout(()=>s.remove(),470);
+}
+// One call to fire the right amount of juice for a judged hit.
+// Score number punches on every gain — cheap, constant, satisfying feedback
+// that doesn't wait for a combo milestone to fire.
+function scorePop(){
+  const el=document.getElementById('hud-score');if(!el)return;
+  el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');
+}
+// A glowing point flies from the hit location to the score display — the
+// classic "coin fly" reward from casual/mobile games. Fires on every hit.
+function pointFly(x,y,color){
+  const stage=document.getElementById('stage');const scoreEl=document.getElementById('hud-score');
+  if(!stage||!scoreEl)return;
+  const stageRect=stage.getBoundingClientRect();
+  const scoreRect=scoreEl.getBoundingClientRect();
+  const fx=(scoreRect.left+scoreRect.width/2)-(stageRect.left+x);
+  const fy=(scoreRect.top+scoreRect.height/2)-(stageRect.top+y);
+  const el=document.createElement('div');el.className='point-fly';
+  el.style.cssText=`left:${x}px;top:${y}px;background:${color};box-shadow:0 0 8px ${color},0 0 14px ${color};--fx:${fx}px;--fy:${fy}px;animation:flyToScore .55s cubic-bezier(.2,.7,.3,1) forwards;`;
+  stage.appendChild(el);
+  setTimeout(()=>{el.remove();scorePop();},550);
+}
+function hitJuice(grade,x,y){
+  const colors={perfect:'#4AA68D',good:'#FF8500',close:'#c8b040',miss:'#FF3838'};
+  const col=colors[grade]||'#4AA68D';
+  if(grade==='perfect')buzz(14);else if(grade==='good')buzz(9);else if(grade==='close')buzz(6);else buzz([25,40,25]);
+  if(grade==='perfect'){screenFlash(col);screenShake();particleBurst(x,y,col,isMobile?7:14);if(!isMobile)shockwave(x,y,col);}
+  else if(grade==='good'){particleBurst(x,y,col,isMobile?4:7);}
+  else if(grade==='close'){particleBurst(x,y,col,isMobile?2:4);}
+  if(grade!=='miss')pointFly(x,y,col); // the constant, every-hit reward — casino-style juice
+  updateAura();
+}
+// Guitar-Hero style ×N COMBO punch-in — fires once per multiplier TIER increase
+// (×2 … ×32), not on every hit, so it reads as a milestone. Higher tiers punch
+// bigger and blast the eyes brighter.
+function fireComboArcade(mult){
+  const el=document.getElementById('combo-arcade');if(!el)return;
+  const col=comboColor(mult);
+  const tag=mult>=200?'SUPER SAIYAN 2':mult>=100?'SUPER SAIYAN':mult>=64?'MAX POWER':mult>=32?'UNREAL':mult>=16?'BLAZING':mult>=8?'ON FIRE':'COMBO';
+  el.innerHTML=`<div class="num" style="color:${col};text-shadow:0 0 24px ${col},0 0 64px ${col}99">×${mult}</div><div class="lbl" style="color:${col}">${tag}</div>`;
+  el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');
+  screenShake();
+  comboChime(mult);
+  buzz(mult>=100?[30,50,30,50,60]:[18,30,18+Math.min(60,mult)]);
+  // Big streaks blast the character's eyes and pop a screen flash for drama.
+  if(mult>=4){screenFlash(col);charReact('combo');}
+  if(mult>=8)eyeBlast('gc',mult);
+}
+function checkComboMilestone(){
+  const m=comboMult();
+  if(m>G.lastMult){G.lastMult=m;fireComboArcade(m);}
+}
+// Dramatic eye bloom pulse on big combo milestones — scales with tier, caps at ×200.
+function eyeBlast(id,mult){
+  const[el,er]=eyes(id);if(!el)return;
+  const r=3+Math.min(5.5,(mult/200)*5.5),glow=14+Math.min(40,(mult/200)*40);
+  [el,er].forEach(e=>{e.r.baseVal.value=r;e.style.fill='#fff';e.style.filter=`drop-shadow(0 0 ${glow}px #fff)`;});
+  setTimeout(()=>{[el,er].forEach(e=>{e.r.baseVal.value=2.4;e.style.filter='drop-shadow(0 0 6px #fff)';});},260);
+}
+
+// ═══════════════ HYPE METER — a glowing fill bar embedded in each lane ═══════════════
+function mkHypeBar(container){
+  const b=document.createElement('div');b.className='hype-bar';container.appendChild(b);G.hypeBars.push(b);return b;
+}
+function updateHypeBars(){
+  if(!G.hypeBars||!G.hypeBars.length)return;
+  const m=comboMult();
+  const tiers=[0,2,4,8,16,32,64,100,200];
+  let idx=tiers.indexOf(m);if(idx<0)idx=tiers.length-1;
+  const lo=tiers[idx],hi=idx<tiers.length-1?tiers[idx+1]:lo+100;
+  const pct=Math.max(0,Math.min(100,Math.round(((G.combo-lo)/(hi-lo))*100)));
+  const col=comboColor(m);
+  G.hypeBars.forEach(b=>{b.style.width=pct+'%';b.style.setProperty('--hc',col);});
+}
+// Rising arpeggio chime for combo-tier milestones — pitch climbs with tier.
+function comboChime(mult){
+  const c=A();
+  const freqs=mult>=200?[1100,1320,1600,1980,2500,3100,3600]:mult>=100?[990,1240,1480,1760,2100,2500,2900]:mult>=64?[990,1240,1480,1760,2100,2500]:mult>=32?[880,1100,1320,1600,1980]:mult>=16?[770,990,1240,1480]:mult>=8?[660,880,1100,1320]:mult>=4?[520,700,880]:[440,600];
+  freqs.forEach((f,i)=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.type='triangle';o.frequency.value=f;
+    const t0=c.currentTime+i*0.055;
+    g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.15,t0+0.018);g.gain.exponentialRampToValueAtTime(0.0001,t0+0.22);
+    o.start(t0);o.stop(t0+0.24);
+  });
+}
+// ═══════════════ GHOST SUBDIVISION GRID ═══════════════
+// A continuous stream of small dim tick marks flowing at the exact same speed
+// as real notes, spawned every 8th-note from the downbeat. Gives a persistent
+// visual click-track to count against, even in the empty space between notes —
+// the same idea as Chapter 5's ghost cells, generalized to the scrolling lanes.
+function makeGhostGrid(container,TRAVEL,subDur,place){
+  let nextT=0,ticks=[],frame=0;
+  const MAX_TICKS=8; // cap DOM nodes — mobile can't handle unbounded creation
+  return function(now){
+    frame++;if(frame%2!==0)return; // skip every other frame
+    if(ticks.length<MAX_TICKS){
+      while(nextT<now+TRAVEL+60&&ticks.length<MAX_TICKS){
+        const el=document.createElement('div');el.className='ghost-tick';
+        el.style.cssText='position:absolute;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.16);box-shadow:0 0 4px rgba(255,255,255,.25);z-index:2;pointer-events:none;will-change:transform;';
+        container.appendChild(el);ticks.push({time:nextT,el});nextT+=subDur;
+      }
+    }
+    ticks=ticks.filter(tk=>{
+      const age=now-tk.time;
+      const prog=(now-(tk.time-TRAVEL))/TRAVEL;
+      if(age>500||prog>1.3){tk.el.remove();return false;}
+      place(tk.el,prog,age);
+      return true;
+    });
+  };
+}
+
+function judge(offsetMs){
+  const abs=Math.abs(offsetMs);
+  if(abs<=30)return{t:'perfect',pts:100,c:'#4AA68D'};
+  if(abs<=80)return{t:'good',pts:60,c:'#FF8500'};
+  if(abs<=150)return{t:'close',pts:25,c:'#c8b040'};
+  return{t:'miss',pts:0,c:'#FF3838'};
+}
+function registerHit(offsetMs,hitX,hitY){
+  const j=judge(offsetMs);G.hits[j.t]++;
+  if(j.t==='miss'){
+    G.misses++;G.combo=0;G.lastMult=1;popHit('MISS','#FF3838');charReact('miss');chord('miss',0.28,0.12);
+    updateAura();
+  }else{
+    G.score+=j.pts*comboMult();G.combo++;G.maxCombo=Math.max(G.maxCombo,G.combo);
+    checkComboMilestone();
+    G.offsets.push(offsetMs);
+    const dir=offsetMs<0?'↑ early':'↓ late';
+    popTiming(Math.abs(Math.round(offsetMs))+'ms '+dir);
+    popHit(j.t.toUpperCase()+(comboMult()>1?' ×'+comboMult():''),j.c);
+    charReact(G.combo%8===0&&j.t==='perfect'?'combo':j.t);
+    chord(j.t,0.16,0.13);
+    const st=document.getElementById('stage');
+    const bx=hitX!=null?hitX:(st?st.offsetWidth*0.24:120);
+    const by=hitY!=null?hitY:(st?st.offsetHeight*0.5:200);
+    hitJuice(j.t,bx,by);
+  }
+  updHUD();return j;
+}
+function registerMiss(){G.hits.miss++;G.misses++;G.combo=0;G.lastMult=1;updHUD();}
+function registerRestBreak(){G.misses++;G.combo=0;G.lastMult=1;popHit('SILENCE!','#FF3838');charReact('dark');chord('miss',0.3,0.1);updHUD();}
+function registerRestPass(){/* correctly stayed silent */G.combo++;G.maxCombo=Math.max(G.maxCombo,G.combo);G.score+=40*comboMult();G.hits.good++;checkComboMilestone();scorePop();updHUD();}
+// Hold-for-duration scorer (Chapter 1). Two things matter: did you START on time
+// (pressOffset), and did you HOLD the right LENGTH (heldMs vs target). The hold
+// length is the whole point of the chapter — that's what teaches "a half note lasts
+// twice as long as a quarter" by feel — so length dominates the grade.
+function registerHold(pressOffset,heldMs,targetMs){
+  const ratio=heldMs/targetMs;
+  let t,pts;
+  if(ratio>=0.85&&ratio<=1.15){t='perfect';pts=100;}
+  else if(ratio>=0.7&&ratio<=1.3){t='good';pts=60;}
+  else if(ratio>=0.55&&ratio<=1.5){t='close';pts=25;}
+  else{t='miss';pts=0;}
+  // a wildly-off press start also caps you at 'close'
+  if(Math.abs(pressOffset)>180&&(t==='perfect'||t==='good')){t='close';pts=25;}
+  G.hits[t]++;
+  if(t==='miss'){
+    G.misses++;G.combo=0;G.lastMult=1;popHit('MISS','#FF3838');charReact('miss');chord('miss',0.28,0.12);
+    updateAura();
+  }else{
+    G.score+=pts*comboMult();G.combo++;G.maxCombo=Math.max(G.maxCombo,G.combo);
+    checkComboMilestone();
+    G.offsets.push(pressOffset);
+    const pct=Math.round(ratio*100);
+    popTiming(`held ${pct}% of length`);
+    popHit(t.toUpperCase()+(comboMult()>1?' ×'+comboMult():''),judge(0).c);
+    charReact(t==='perfect'?'perfect':t);
+    chord(t,0.16,0.13);
+    const st=document.getElementById('stage');
+    hitJuice(t, st?st.offsetWidth*0.24:120, st?st.offsetHeight*0.46:200);
+  }
+  updHUD();
+}
+
+function popHit(text,color){
+  const el=document.getElementById('stage').querySelector('.hit-pop');if(!el)return;
+  el.textContent=text;el.style.color=color;el.style.opacity='1';el.style.transform='translateX(-50%) translateY(-12px)';
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(-50%)';},550);
+}
+function popTiming(text){const el=document.getElementById('timing-pop');el.textContent=text;el.style.opacity='1';setTimeout(()=>el.style.opacity='0',650);}
+
+// Count-in then callback. All 5 clicks (4,3,2,1,GO) are scheduled up front against
+// the AudioContext clock — sample-accurate, no setTimeout drift. G.audioStart is set
+// to the exact scheduled instant of "GO" (not whenever the JS callback happens to
+// fire), so the note timeline starts perfectly locked to what the player heard.
+function countIn(cb){
+  const ci=document.getElementById('count-in'),cn=document.getElementById('cnum'),cl=document.getElementById('clbl');
+  ci.style.display='flex';cl.textContent='get ready';
+  const ctx=A(),bms=beatMs()/1000;
+  const t0=ctx.currentTime+0.08; // small safety buffer so the first click never gets scheduled in the past
+  for(let i=0;i<4;i++){
+    const time=t0+i*bms,num=4-i;
+    countClickAt(time,1);
+    const delay=Math.max(0,(time-ctx.currentTime)*1000);
+    setTimeout(()=>{cn.textContent=num;cn.style.color=num===1?'#FF8500':'#4AA68D';},delay);
+  }
+  const goTime=t0+4*bms;
+  countClickAt(goTime,0);
+  setTimeout(()=>{cn.textContent='GO';cn.style.color='#00E5FF';cl.textContent='';},Math.max(0,(goTime-ctx.currentTime)*1000));
+  const startTime=goTime+bms*0.6; // gameplay's true beat-0, matches the original feel
+  G.audioStart=startTime;
+  setTimeout(()=>{ci.style.display='none';cb();},Math.max(0,(startTime-ctx.currentTime)*1000));
+}
+
+// Metronome dots + click during play.
+// setInterval here is only a POLLING loop that checks "is it time to schedule the
+// next click yet?" — the click itself is scheduled via metroClickAt() against the
+// Web Audio clock, so it plays sample-accurately no matter how late/early the poll
+// tick fires. This is the standard look-ahead scheduler pattern for web audio timing
+// (main-thread jank can delay the *poll*, but never the *sound*).
+function startMetro(){
+  const mr=document.getElementById('metro-row');mr.innerHTML='';
+  for(let i=0;i<4;i++){const d=document.createElement('div');d.className='md';mr.appendChild(d);}
+  const ctx=A(),bms=beatMs()/1000,LOOKAHEAD=0.15,POLL_MS=25;
+  let beatIdx=Math.max(0,Math.ceil((ctx.currentTime-G.audioStart)/bms));
+  let nextTime=G.audioStart+beatIdx*bms;
+  function scheduleDots(time,beatMod){
+    const delay=Math.max(0,(time-ctx.currentTime)*1000);
+    setTimeout(()=>{
+      if(!G.active)return;
+      const dots=mr.querySelectorAll('.md');dots.forEach(d=>d.className='md');
+      if(dots[beatMod])dots[beatMod].className='md '+(beatMod===0?'strong':'on');
+    },delay);
+  }
+  G.metro=setInterval(()=>{
+    while(nextTime<ctx.currentTime+LOOKAHEAD){
+      const beatMod=beatIdx%4;
+      metroClickAt(nextTime,beatMod===0);
+      scheduleDots(nextTime,beatMod);
+      beatIdx++;nextTime+=bms;
+    }
+  },POLL_MS);
+}
+
+function addTap(el,fn){
+  const h=e=>{e.preventDefault();fn(e);};
+  el.addEventListener('touchstart',h,{passive:false});
+  el.addEventListener('mousedown',h);
+  G.handlers.push(()=>{el.removeEventListener('touchstart',h);el.removeEventListener('mousedown',h);});
+}
+// Press + release, for the hold-for-duration mechanic (Chapter 1).
+function addHold(el,onPress,onRelease){
+  const down=e=>{e.preventDefault();onPress(e);};
+  const up=e=>{onRelease(e);};
+  el.addEventListener('touchstart',down,{passive:false});
+  el.addEventListener('mousedown',down);
+  el.addEventListener('touchend',up);
+  el.addEventListener('touchcancel',up);
+  window.addEventListener('mouseup',up);
+  G.handlers.push(()=>{
+    el.removeEventListener('touchstart',down);el.removeEventListener('mousedown',down);
+    el.removeEventListener('touchend',up);el.removeEventListener('touchcancel',up);
+    window.removeEventListener('mouseup',up);
+  });
+}
+function stopGame(){
+  G.active=false;
+  if(G.raf){cancelAnimationFrame(G.raf);G.raf=null;}
+  if(G.metro){clearInterval(G.metro);G.metro=null;}
+  G.handlers.forEach(h=>h());G.handlers=[];
+  stopMotes();
+  stopDrone();
+  stopStorm();
+  const gc=document.getElementById('gc');if(gc){gc.classList.remove('ssj','ssj2','warming');gc.style.removeProperty('--warm');}
+  const treesFar0=document.querySelector('.atmos-trees-far');if(treesFar0)treesFar0.style.removeProperty('--blaze');
+  const treesFar=document.querySelector('.atmos-trees-far');if(treesFar)treesFar.classList.remove('ablaze');
+  const hv=document.getElementById('hype-vignette');if(hv){hv.style.opacity='0';hv.classList.remove('maxed');}
+  const aura=document.getElementById('atmos-aura');if(aura)aura.style.opacity='0';
+}
+
+// ═══════════════ START GAME ROUTER ═══════════════
+function startGame(){
+  resetState();show('game-screen');
+  populateBuildingWindows('buildings-game');
+  const ch=CH[G.chapter];
+  G.curChapter=ch;
+  G.paused=false;
+  document.getElementById('pause-overlay').style.display='none';
+  document.getElementById('pause-btn').style.display='';
+  const stage=document.getElementById('stage');
+  stage.innerHTML='<div class="hit-pop"></div>';
+  // ONE hype strip, fixed at the bottom of the stage — identical in every chapter.
+  const hypeStrip=document.createElement('div');hypeStrip.className='hype-strip';
+  stage.appendChild(hypeStrip);mkHypeBar(hypeStrip);
+  const hv=document.getElementById('hype-vignette');if(hv){hv.style.opacity='0';hv.classList.remove('maxed');}
+  document.getElementById('hud-score').textContent='0';
+  document.getElementById('hud-miss').textContent='0';
+  document.getElementById('hud-combo').textContent='';
+  // reset metro dots
+  document.getElementById('metro-row').innerHTML='';
+  const aura=document.getElementById('atmos-aura');if(aura)aura.style.opacity='0';
+  startMotes();
+  if(ch.game==='float') gameFloat(ch);
+  else if(ch.game==='drop') gameDrop(ch);
+  else if(ch.game==='pulse') gamePulse(ch);
+  else if(ch.game==='runner') gameRunner(ch);
+  else if(ch.game==='gates') gameGates(ch);
+  else if(ch.game==='conductor') gameConductor(ch);
+}
+
+// ═══════════════ PAUSE SYSTEM ═══════════════
+// Pausing must freeze the audio timeline. gameNow() = A().currentTime - G.audioStart,
+// so we record how far into the round we were, halt the metronome, and on resume
+// shift G.audioStart forward by the exact real-time spent paused — the note clock
+// then continues from precisely where it stopped, no desync. Each chapter's rAF
+// loop checks G.paused and idles (keeps requesting frames, advances nothing) while paused.
+function pauseGame(){
+  if(!G.active||G.paused)return;
+  G.paused=true;
+  G.pauseAt=A().currentTime; // real audio-clock instant we paused at
+  if(G.metro){clearInterval(G.metro);G.metro=null;}
+  document.getElementById('pause-overlay').style.display='flex';
+  const hs=document.getElementById('haptic-status');
+  if(hs){
+    if(!isTouchDevice)hs.textContent='';
+    else if(!navigator.vibrate)hs.textContent='Haptics: not supported by this browser (this is guaranteed on iPhone/Safari — Apple has never enabled it for any website).';
+    else hs.textContent='Haptics: your browser supports vibration. If you\'re not feeling it, check your phone\'s own vibration/haptics setting.';
+  }
+}
+function resumeGame(){
+  if(!G.paused)return;
+  const pausedFor=A().currentTime-G.pauseAt;
+  G.audioStart+=pausedFor; // slide the origin forward so gameNow() resumes seamlessly
+  G.paused=false;
+  document.getElementById('pause-overlay').style.display='none';
+  startMetro(); // reschedules cleanly from the (shifted) current beat position
+}
+function setupPauseControls(){
+  document.getElementById('pause-btn').onclick=pauseGame;
+  document.getElementById('pause-resume').onclick=resumeGame;
+  document.getElementById('pause-retry').onclick=()=>{
+    G.paused=false;document.getElementById('pause-overlay').style.display='none';
+    stopGame();startGame();
+  };
+  document.getElementById('pause-menu').onclick=()=>{
+    G.paused=false;document.getElementById('pause-overlay').style.display='none';
+    stopGame();show('title-screen');
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SHARED JUMP-RUNNER ENGINE (Chrome Dino style) — powers Chapter 1 (duration)
+// and Chapter 4 (rests). Character is fixed in place, obstacles/gaps scroll
+// toward it. One clean tap triggers a SCRIPTED jump — height and hang-time
+// are driven by the real duration (in ms) of the note being cleared, so a
+// whole note keeps you airborne 4x longer than a quarter. You feel it, not
+// just see it. Tapping while airborne does nothing (no spamming/cheesing —
+// you have to wait to land before you can commit to the next jump), and
+// during Ch4's rests, jumping is the WRONG move — you're meant to stay
+// grounded and run through the silence.
+// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+// CHAPTER 4 — RESTS (Chrome-Dino jump). Character fixed at a STRIKE LINE.
+// Fences approach; tap to jump each note as its front edge reaches the line.
+// Rests are gaps — do NOT tap, run through the silence. A pre-flash pulse on
+// the strike line fires one beat before each note is due, so a non-rhythmic
+// player gets a "here comes one" warning instead of guessing.
+// ═══════════════════════════════════════════════════════════════════
+function jumpRunnerEngine(ch, allowRests){
+  const stage=document.getElementById('stage');
+  const W=stage.offsetWidth,H=stage.offsetHeight;
+  const charX=W*0.24,groundY=H*0.62;
+  const BMS=beatMs();
+
+  // Ground line — doubles as this chapter's hype meter strip, for consistency
+  // with every other chapter's lane.
+  const ground=document.createElement('div');
+  ground.style.cssText=`position:absolute;left:0;right:0;top:${groundY+34}px;height:2px;background:#1a2e1a;z-index:2;overflow:visible;`;
+  stage.appendChild(ground);
+  // Pre-flash halo — pulses one beat before each note is due. This is the only
+  // timing cue at the character's position now; a static line behind the figure
+  // read as visual clutter once the eyes themselves carry the "ready" read.
+  const preFlash=document.createElement('div');
+  preFlash.style.cssText=`position:absolute;left:${charX}px;top:${groundY-70}px;width:16px;height:110px;background:radial-gradient(ellipse,rgba(74,166,141,.5),transparent 70%);z-index:2;transform:translateX(-50%);opacity:0;transition:opacity .12s;pointer-events:none;`;
+  stage.appendChild(preFlash);
+  function pulseStrike(){preFlash.style.opacity='1';setTimeout(()=>{preFlash.style.opacity='0';},140);}
+  // Character, fixed x, jumps vertically via transform only
+  const cw=document.createElement('div');
+  cw.style.cssText=`position:absolute;left:${charX}px;top:${groundY}px;transform:translate(-50%,-50%);z-index:5;will-change:transform;`;
+  cw.innerHTML=charSVG('gc',0.85);
+  stage.appendChild(cw);
+
+  // 16 bars of quarter/eighth notes + rests (rests never lead, never doubled).
+  function fixRestPlacement(seq){
+    if(seq[0].endsWith('rest')){
+      const idx=seq.findIndex(k=>!k.endsWith('rest'));
+      if(idx>0){[seq[0],seq[idx]]=[seq[idx],seq[0]];}
+    }
+    for(let i=1;i<seq.length;i++){
+      if(seq[i].endsWith('rest') && seq[i-1].endsWith('rest')){
+        let swapIdx=-1;
+        for(let j=i+1;j<seq.length;j++){if(!seq[j].endsWith('rest')){swapIdx=j;break;}}
+        if(swapIdx===-1)for(let j=i-2;j>=0;j--){if(!seq[j].endsWith('rest')){swapIdx=j;break;}}
+        if(swapIdx!==-1){[seq[i],seq[swapIdx]]=[seq[swapIdx],seq[i]];}
+      }
+    }
+    return seq;
+  }
+  // ~16 bars: build a longer pool of quarter/eighth/rest tokens, with sparse
+  // triplet groups mixed in — this chapter now sits right before the
+  // Conductor, so a taste of "3 quick jumps in the space of 2 beats" belongs
+  // here. 'triplet3' is a marker expanded into 3 real obstacles below.
+  const poolBase=['quarter','eighth','qrest','quarter','eighth','erest','quarter','quarter','eighth','qrest','eighth','quarter','erest','quarter','eighth','eighth','qrest','quarter','eighth','quarter','erest','eighth','quarter','eighth','qrest','quarter','eighth','quarter','eighth','erest','quarter','eighth','triplet3','quarter','eighth','qrest','triplet3','quarter'];
+  const pool=[];while(pool.reduce((s,k)=>s+(k==='triplet3'?2:N[k].beats),0)<64){pool.push(...poolBase);} // ≥16 bars
+  const seq=fixRestPlacement(shuffle(pool));
+
+  const SPEED=scrollSpeed();
+  const TRAVEL=(W-charX)/SPEED*1000;
+  const FENCE_UNIT=42; // px of fence width per beat of duration
+
+  // Lead-in must be at least as long as one full obstacle's travel, plus a beat
+  // of buffer — otherwise the first obstacle spawns already mid-flight the
+  // instant "GO" fires, and the player never sees it start.
+  const obstacles=[];let t=quantizeLead(BMS,Math.max(BMS*2,TRAVEL+BMS));
+  seq.forEach(key=>{
+    if(key==='triplet3'){
+      // 3 fences across 2 beats — a rapid-fire triplet group, same rhythmic
+      // shape the player has already SEEN in the Pulse chapter, now felt as
+      // three quick jumps.
+      const n=N.triplet;
+      for(let i=0;i<3;i++){
+        obstacles.push({key:'triplet',n,isRest:false,hitTime:t,fenceW:38,spawned:false,done:false,el:null,preflashed:false,tripletGroup:true});
+        t+=BMS*n.beats;
+      }
+      return;
+    }
+    const n=N[key];const isRest=key.endsWith('rest');
+    obstacles.push({key,n,isRest,hitTime:t,fenceW:Math.max(64,n.beats*FENCE_UNIT),spawned:false,done:false,el:null,preflashed:false});
+    t+=BMS*n.beats;
+  });
+  // Cap each obstacle's max hang-time to the gap before the NEXT obstacle's hit
+  // window, with a safety buffer. Without this, a long jump (e.g. a whole note)
+  // can still be airborne when the next note's tap window opens, silently
+  // eating a well-timed tap — proportional duration is only honest if it never
+  // costs you the next note.
+  for(let i=0;i<obstacles.length;i++){
+    const nextT=i+1<obstacles.length?obstacles[i+1].hitTime:obstacles[i].hitTime+BMS*4;
+    obstacles[i].maxHang=Math.max(140,nextT-obstacles[i].hitTime-40);
+  }
+  G.totalNotes=obstacles.filter(o=>!o.isRest).length;
+  // Beam eligibility — real notation only beams eighth notes (and shorter)
+  // together, never quarter notes. Mark consecutive eighth/triplet pairs so
+  // spawnObstacle can attach a connecting beam, exactly like a real staff.
+  for(let i=0;i<obstacles.length-1;i++){
+    const a=obstacles[i],b=obstacles[i+1];
+    if(!a.isRest&&!b.isRest&&!a.tripletGroup&&!b.tripletGroup&&a.n.symType==='eighth'&&b.n.symType==='eighth'){
+      a.beamGapPx=(b.hitTime-a.hitTime)/1000*SPEED;
+    }
+  }
+
+  function spawnObstacle(o){
+    const el=document.createElement('div');
+    if(o.isRest){
+      el.style.cssText=`position:absolute;left:0;top:${groundY-8}px;width:${o.fenceW}px;height:56px;background:#000;border:2px dashed #333;display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:none;transform:translateX(${W}px);will-change:transform;`;
+      el.innerHTML=`<div>${noteGlyph(o.n.symType,"#444",18)}</div>`;
+    } else {
+      el.className='note-live';
+      el.style.cssText=`position:absolute;left:0;top:${groundY-46}px;width:${o.fenceW}px;height:46px;background:linear-gradient(160deg,#16321f,#0a1610);border:2px solid ${o.n.color};border-bottom:3px solid ${o.n.color};border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;pointer-events:none;transform:translateX(${W}px);will-change:transform;box-shadow:0 0 18px ${o.n.color}66,inset 0 1px 0 rgba(255,255,255,.08);`;
+      el.style.setProperty('--nc',o.n.color);el.style.setProperty('--spin','1.3s');
+      el.innerHTML=`<div class="swivel"></div><div style="line-height:1;z-index:1">${noteGlyph(o.n.symType,o.n.color,18)}</div><div style="font-family:var(--font-m);font-size:7px;color:${o.n.color};z-index:1">${o.n.label}</div>`;
+      if(o.beamGapPx){
+        const beam=document.createElement('div');
+        beam.style.cssText=`position:absolute;left:${o.fenceW-4}px;top:-4px;width:${o.beamGapPx-o.fenceW+8}px;height:3px;background:${o.n.color};opacity:.8;border-radius:2px;box-shadow:0 0 5px ${o.n.color}99;pointer-events:none;z-index:2;`;
+        el.appendChild(beam);
+      }
+    }
+    stage.appendChild(el);fadeInNote(el);o.el=el;
+  }
+
+  // Jump state — a scripted arc, NOT free physics. Duration/height come from
+  // the note that triggered it, computed at the moment of a successful tap.
+  let airborne=false,jumpStart=0,jumpDur=0,jumpHeight=0,stumbling=false;
+  let bufferedJump=null; // a tap that landed while airborne — fires the instant you touch down, instead of vanishing
+
+  function whiff(){
+    // A tap that genuinely didn't match anything (nothing in range). Soft, low,
+    // and quiet on purpose — this just tells the player "input received, nothing
+    // there" so they don't panic-mash wondering if the game heard them.
+    const c=A(),osc=c.createOscillator(),g=c.createGain();
+    osc.connect(g);g.connect(c.destination);osc.type='square';osc.frequency.value=180;
+    const t0=c.currentTime;g.gain.setValueAtTime(0.045,t0);g.gain.exponentialRampToValueAtTime(0.001,t0+0.035);
+    osc.start(t0);osc.stop(t0+0.04);
+  }
+
+  function triggerJump(o,bestD){
+    o.done=true;if(o.el)o.el.style.opacity='0';
+    registerHit(bestD);
+    airborne=true;jumpStart=gameNow();
+    jumpDur=Math.min(Math.max(180,o.n.beats*BMS*0.85),o.maxHang); // hang-time scales with duration, capped so it never eats the next note's window
+    jumpHeight=30+o.n.beats*20; // taller arc for longer notes
+  }
+
+  addTap(stage,()=>{
+    if(!G.active)return;
+    const now=gameNow();
+    // Match REAL (jumpable) obstacles first — same priority Ch2 uses, which is
+    // the most reliable algorithm in the game. A tap aimed at a real note must
+    // never lose to an adjacent silent rest just because the rest happens to
+    // be a few ms closer in time.
+    let best=null,bestD=Infinity;
+    obstacles.forEach(o=>{if(o.done||!o.spawned||o.isRest)return;const d=now-o.hitTime;if(Math.abs(d)<Math.abs(bestD)){bestD=d;best=o;}});
+    if(best&&Math.abs(bestD)<=200){
+      if(airborne){bufferedJump={obstacle:best,bestD};return;} // don't drop it — land, then jump
+      triggerJump(best,bestD);
+      return;
+    }
+    // No real note in range — check for a nearby unbroken rest, tighter window
+    // so it can never outcompete a real note that's genuinely close.
+    let bestRest=null,bestRestD=Infinity;
+    obstacles.forEach(o=>{if(o.done||!o.spawned||!o.isRest)return;const d=now-o.hitTime;if(Math.abs(d)<Math.abs(bestRestD)){bestRestD=d;bestRest=o;}});
+    if(bestRest&&Math.abs(bestRestD)<=120){
+      bestRest.done=true;registerRestBreak();
+      if(bestRest.el)bestRest.el.style.borderColor='#FF3838';
+      stumbling=true;setTimeout(()=>stumbling=false,180);
+      return;
+    }
+    whiff();
+  });
+
+  let ended=false;
+  function finish(){if(ended)return;ended=true;stopGame();setTimeout(endGame,600);}
+  countIn(()=>{
+    G.active=true;startMetro();updateAura();
+    function loop(){
+      if(!G.active)return;
+      if(G.paused){G.raf=requestAnimationFrame(loop);return;}
+      const now=gameNow();
+      // resolve jump arc
+      let hop=0;
+      if(airborne){
+        const prog=(now-jumpStart)/jumpDur;
+        if(prog>=1){
+          airborne=false;
+          if(bufferedJump){
+            const bj=bufferedJump;bufferedJump=null;
+            if(!bj.obstacle.done)triggerJump(bj.obstacle,bj.bestD); // still valid — fire it now instead of it having been silently eaten
+          }
+        }
+        else hop=jumpHeight*Math.sin(Math.PI*Math.min(1,Math.max(0,prog)));
+      }
+      const wobble=stumbling?4:0;
+      cw.style.transform=`translate(-50%,-50%) translateY(${-hop}px) translateX(${wobble}px)`;
+      obstacles.forEach(o=>{
+        // Pre-flash the strike line one beat before a NOTE is due (not rests —
+        // rests you're supposed to do nothing, so no cue there).
+        if(!o.preflashed && !o.isRest && now>=o.hitTime-BMS && now<o.hitTime){
+          o.preflashed=true;pulseStrike();
+        }
+        if(!o.spawned && now>=o.hitTime-TRAVEL){o.spawned=true;spawnObstacle(o);}
+        if(o.spawned && o.el){
+          const prog=(now-(o.hitTime-TRAVEL))/TRAVEL;
+          const x=W-(W-charX)*prog; // front edge lands exactly on charX (strike line) at hitTime
+          o.el.style.transform=`translateX(${x}px)`;
+          if(!o.isRest)o.el.style.setProperty('--spin',Math.max(.3,1.3-Math.max(0,prog)*1.05)+'s');
+          if(!o.done && now>o.hitTime+200){
+            o.done=true;
+            if(o.isRest){registerRestPass();charReact('dark');}
+            else{registerMiss();charReact('miss');o.el.style.borderColor='#FF3838';}
+          }
+          if(x<-100)o.el.remove();
+        }
+      });
+      if(obstacles.every(o=>o.done)){finish();return;}
+      G.raf=requestAnimationFrame(loop);
+    }
+    G.raf=requestAnimationFrame(loop);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAPTER 1 — DURATION (HOLD-for-length. A note is a BAR whose width IS its
+// duration. Press when its front edge reaches the line, HOLD while it passes,
+// release when its back edge clears the line. You're not tapping — you're
+// physically sustaining the note for its full length. This is the ONE chapter
+// that teaches duration by making you DO the duration, and the only mechanic
+// in the whole game that uses hold-and-release instead of tap. That's what
+// makes it unmistakably different from the Conductor.)
+// ═══════════════════════════════════════════════════════════════════
+function gameFloat(ch){
+  const stage=document.getElementById('stage');
+  const W=stage.offsetWidth,H=stage.offsetHeight;
+  const LANE_Y=H*0.40,LANE_H=110;
+  const HIT_X=W*0.24;
+  const SPAWN_X=W-20;
+  const TRAVEL_DIST=SPAWN_X-HIT_X;
+  const BMS=beatMs();
+  const SPEED=scrollSpeed()*0.62; // long bars need a slower scroll — fixed fraction of the ONE shared speed
+
+  const lane=document.createElement('div');
+  lane.className='lane-tex lane-soft';
+  lane.style.cssText=`position:absolute;left:0;top:${LANE_Y}px;width:${W}px;height:${LANE_H}px;background:var(--sludge);border:1px solid #18402D;overflow:hidden;z-index:1;`;
+  stage.appendChild(lane);
+  // Soft hit-glow column — the Ch4 "rest game" cue, now the ONE standard marker
+  // in every chapter. No hard lines behind the character anywhere.
+  const hitGlow=document.createElement('div');
+  hitGlow.style.cssText=`position:absolute;left:${HIT_X}px;top:${LANE_Y-20}px;width:26px;height:${LANE_H+40}px;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(74,166,141,.45),transparent 72%);z-index:2;transform:translateX(-50%);pointer-events:none;`;
+  stage.appendChild(hitGlow);
+  const holdFill=document.createElement('div');
+  holdFill.style.cssText=`position:absolute;left:0;top:${LANE_Y}px;width:${HIT_X}px;height:${LANE_H}px;background:linear-gradient(to right,transparent,rgba(74,166,141,.18));z-index:0;opacity:0;transition:opacity .08s;`;
+  stage.appendChild(holdFill);
+  // Character stands directly on the bar's bottom edge — same grounded layout
+  // as Chapter 4 — instead of floating in empty space below the lane.
+  const groundY=LANE_Y+LANE_H;
+  const cw=document.createElement('div');
+  cw.style.cssText=`position:absolute;left:${HIT_X}px;top:${groundY}px;transform:translate(-50%,-50%);z-index:5;`;
+  cw.innerHTML=`<div class="char-inner" id="c1-char-inner">${charSVG('gc',0.8)}</div>`;
+  stage.appendChild(cw);
+  const charInner=cw.querySelector('.char-inner');
+  const hintLbl=document.createElement('div');
+  hintLbl.style.cssText=`position:absolute;left:${HIT_X}px;top:${groundY+38}px;transform:translateX(-50%);font-family:var(--font-m);font-size:11px;color:#555;letter-spacing:.1em;z-index:4;white-space:nowrap;`;
+  hintLbl.textContent='PRESS & HOLD for the note length';
+  stage.appendChild(hintLbl);
+
+  // 16 bars of whole/half/quarter notes. Each note occupies its full duration,
+  // so 16 "bars" here = a steady stream of ~16-24 held notes.
+  const durBase=['quarter','half','whole','quarter','half','quarter','whole','half','quarter','quarter','half','whole','half','quarter','half','whole','quarter','half','quarter','whole'];
+  const durKeys=[];while(durKeys.reduce((s,k)=>s+N[k].beats,0)<64){durKeys.push(...shuffle(durBase));} // ≥16 bars
+  const notes=[];
+  let t=quantizeLead(BMS,Math.max(BMS*2,(TRAVEL_DIST/SPEED*1000)+BMS));
+  durKeys.forEach(key=>{
+    const n=N[key];
+    const durMs=n.beats*BMS;
+    const barW=Math.max(70,(durMs/1000)*SPEED); // width = duration, min 70px so short notes stay tappable
+    notes.push({key,n,durMs,barW,startTime:t,endTime:t+durMs,spawned:false,done:false,el:null,pressed:false,pressT:0});
+    t+=durMs; // next note begins exactly when this one ends (legato stream)
+  });
+  G.totalNotes=notes.length;
+
+  const TRAVEL=TRAVEL_DIST/SPEED*1000; // ms for a note's FRONT edge to travel spawn→line
+
+  const ghostUpdate=makeGhostGrid(lane,TRAVEL,BMS/2,(el,prog,age)=>{
+    const x=SPAWN_X-TRAVEL_DIST*prog-2.5;
+    el.style.transform=`translate(${x}px,${LANE_H/2-2.5}px)`;
+    el.style.opacity=age<80?String(Math.min(1,age/80)*.35):(age<250?'.35':String(Math.max(0,.35-(age-250)/200)));
+  });
+
+  function spawnNote(nt){
+    const el=document.createElement('div');
+    el.className='note-live';
+    el.style.cssText=`position:absolute;left:0;top:22px;width:${nt.barW}px;height:${LANE_H-44}px;background:linear-gradient(160deg,#16321f,#0a1610);border:2px solid ${nt.n.color};border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;pointer-events:none;transform:translateX(${SPAWN_X}px);will-change:transform;box-shadow:0 0 22px ${nt.n.color}80,inset 0 0 12px ${nt.n.color}30,inset 0 1px 0 rgba(255,255,255,.08);`;
+    el.style.setProperty('--nc',nt.n.color);el.style.setProperty('--spin','1.6s');
+    el.innerHTML=`<div class="swivel"></div><div style="line-height:1;z-index:1">${noteGlyph(nt.n.symType,nt.n.color,26)}</div><div style="font-family:var(--font-m);font-size:8px;color:${nt.n.color};margin-top:2px;z-index:1">${nt.n.label}</div>`;
+    lane.appendChild(el);fadeInNote(el);nt.el=el;
+  }
+
+  // Track which note is currently "active" for press/release resolution.
+  let holding=false,activeNote=null;
+
+  addHold(stage,
+    ()=>{ // PRESS
+      if(!G.active||G.paused)return;
+      const now=gameNow();
+      // find the note whose front edge is nearest the line right now
+      let best=null,bestD=Infinity;
+      notes.forEach(nt=>{if(nt.done||nt.pressed||!nt.spawned)return;const d=now-nt.startTime;if(Math.abs(d)<Math.abs(bestD)){bestD=d;best=nt;}});
+      if(best&&Math.abs(bestD)<200){
+        best.pressed=true;best.pressT=now;
+        holding=true;activeNote=best;
+        holdFill.style.opacity='1';
+        cw.style.filter='drop-shadow(0 0 14px var(--slime))'; // character lights up while sustaining
+        charInner.classList.add('char-vibrate'); // vibrates like it's actively "eating" the note
+        if(best.el){best.el.style.borderColor='#4AA68D';best.el.style.boxShadow='0 0 20px rgba(74,166,141,.6)';best.el.style.background='#12281c';}
+        startDrone();
+      } else { whiffTick(); }
+    },
+    ()=>{ // RELEASE
+      charInner.classList.remove('char-vibrate');
+      charEat('gc',0); // reset eye bloom
+      if(!activeNote){cw.style.filter='';holdFill.style.opacity='0';stopDrone();return;}
+      const now=gameNow();
+      const held=now-activeNote.pressT;
+      const pressOffset=activeNote.pressT-activeNote.startTime;
+      registerHold(pressOffset,held,activeNote.durMs);
+      bounceChar();
+      cw.style.filter='';
+      activeNote.done=true;
+      if(activeNote.el){activeNote.el.style.boxShadow='';activeNote.el.style.opacity='0';}
+      holding=false;activeNote=null;holdFill.style.opacity='0';
+      stopDrone();
+    }
+  );
+
+  let ended=false;
+  function finish(){if(ended)return;ended=true;stopGame();setTimeout(endGame,600);}
+  countIn(()=>{
+    G.active=true;startMetro();updateAura();
+    function loop(){
+      if(!G.active)return;
+      if(G.paused){G.raf=requestAnimationFrame(loop);return;}
+      const now=gameNow();
+      ghostUpdate(now);
+      notes.forEach(nt=>{
+        if(!nt.spawned && now>=nt.startTime-TRAVEL){nt.spawned=true;spawnNote(nt);}
+        if(nt.spawned && nt.el){
+          // front edge position; bar extends barW to the right of it
+          const prog=(now-(nt.startTime-TRAVEL))/TRAVEL;
+          const frontX=SPAWN_X-TRAVEL_DIST*prog;
+          nt.el.style.transform=`translateX(${frontX}px)`;
+          nt.el.style.setProperty('--spin',Math.max(.32,1.6-Math.max(0,prog)*1.35)+'s');
+          // auto-miss if the note's whole body passed the line and was never pressed
+          if(!nt.pressed && !nt.done && now>nt.startTime+200){
+            nt.done=true;registerMiss();charReact('miss');
+            nt.el.style.borderColor='#FF3838';nt.el.style.transition='opacity .3s';nt.el.style.opacity='0';
+          }
+          if(frontX<-nt.barW-40)nt.el.remove();
+        }
+      });
+      // if currently holding, keep the fill glowing, swell the bass drone, and
+      // bloom the eyes larger the longer the note has been "consumed"
+      if(holding){holdFill.style.opacity='1';if(activeNote){const p=(now-activeNote.pressT)/activeNote.durMs;swellDrone(p);charEat('gc',p);}}
+      if(notes.every(nt=>nt.done)){finish();return;}
+      G.raf=requestAnimationFrame(loop);
+    }
+    G.raf=requestAnimationFrame(loop);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAPTER 2 — THE DROP (DDR lane tap)
+// ═══════════════════════════════════════════════════════════════════
+function gameDrop(ch){
+  const stage=document.getElementById('stage');
+  const W=stage.offsetWidth,H=stage.offsetHeight;
+  const laneW=Math.min(300,W*0.8),laneX=(W-laneW)/2;
+  const TARGET_Y=H*0.60; // raised out of the bottom thumb zone — on a phone your thumb was covering the hit point
+
+  // Lane visuals
+  const lane=document.createElement('div');
+  lane.className='lane-tex lane-soft-v';
+  lane.style.cssText=`position:absolute;left:${laneX}px;top:0;width:${laneW}px;height:100%;background:var(--sludge);border-left:1px solid #1a2e1a;border-right:1px solid #1a2e1a;`;
+  stage.appendChild(lane);
+  // The hit point IS the character's head. A soft glow ring marks it instead of
+  // a hard line above the character (which made the eye align notes to the line,
+  // not to the figure). Notes fall onto the character's head to be struck.
+  const glow=document.createElement('div');
+  glow.style.cssText=`position:absolute;left:${W/2}px;top:${TARGET_Y}px;width:96px;height:96px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(74,166,141,.16),transparent 68%);z-index:1;pointer-events:none;`;
+  stage.appendChild(glow);
+  // Character centered ON the target line — its head sits exactly where notes are
+  // judged, so you aim the falling notes right onto it.
+  const cw=document.createElement('div');
+  cw.style.cssText=`position:absolute;left:${W/2}px;top:${TARGET_Y+22}px;transform:translate(-50%,-50%);z-index:5;`;
+  cw.innerHTML=charSVG('gc',0.8);
+  stage.appendChild(cw);
+
+  const seqBase=['quarter','quarter','eighth','eighth','quarter','eighth','eighth','quarter','eighth','eighth','quarter','eighth','quarter','eighth','eighth','quarter','eighth','quarter','eighth','eighth','quarter','eighth'];
+  const seq=[];while(seq.reduce((s,k)=>s+N[k].beats,0)<64){seq.push(...shuffle(seqBase));} // ≥16 bars
+  G.totalNotes=seq.length;
+  const SPEED=scrollSpeed();
+  const TRAVEL=(TARGET_Y+60)/SPEED*1000; // ms from spawn to target
+  const BMS=beatMs();
+
+  const notes=[];
+  let t=quantizeLead(BMS,Math.max(BMS*2,TRAVEL+BMS));
+  seq.forEach((key,i)=>{
+    const n=N[key];
+    notes.push({key,n,hitTime:t,spawned:false,hit:false,el:null});
+    t+=BMS*n.beats;
+  });
+
+  const ghostUpdate=makeGhostGrid(lane,TRAVEL,BMS/2,(el,prog,age)=>{
+    const y=-50+Math.max(0,prog)*(TARGET_Y+50-26);
+    el.style.transform=`translate(${laneW/2-2.5}px,${y}px)`;
+    el.style.opacity=age<80?String(Math.min(1,age/80)*.42):(age<250?'.42':String(Math.max(0,.42-(age-250)/200)));
+  });
+
+  function spawnNote(note){
+    const el=document.createElement('div');
+    el.style.cssText=`position:absolute;left:${W/2}px;top:0;transform:translate(-50%,-50px);z-index:3;pointer-events:none;will-change:transform;`;
+    el.innerHTML=`<div class="note-live" style="width:66px;height:52px;background:linear-gradient(160deg,#16321f,#0a1610);border:2px solid ${note.n.color};border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 20px ${note.n.color}88,inset 0 0 10px ${note.n.color}33,inset 0 1px 0 rgba(255,255,255,.08);--nc:${note.n.color};--spin:1.5s"><div class="swivel"></div>
+      <div style="line-height:1;z-index:1">${noteGlyph(note.n.symType,note.n.color,24)}</div>
+      <div style="font-family:var(--font-m);font-size:8px;color:${note.n.color};z-index:1">${note.n.pie}</div></div>`;
+    stage.appendChild(el);fadeInNote(el);note.el=el;
+  }
+
+  addTap(stage,()=>{
+    if(!G.active)return;
+    if(G.paused)return;
+    const now=gameNow();
+    let best=null,bestD=Infinity;
+    notes.forEach(nt=>{if(nt.hit||!nt.spawned)return;const d=now-nt.hitTime;if(Math.abs(d)<Math.abs(bestD)){bestD=d;best=nt;}});
+    if(best&&Math.abs(bestD)<250){best.hit=true;const nl=best.el.querySelector('.note-live')||best.el;nl.classList.add('hit');best.el.style.transition='opacity .18s';best.el.style.opacity='0';registerHit(bestD);bounceChar();}
+  });
+
+  let ended=false;
+  function finish(){if(ended)return;ended=true;stopGame();setTimeout(endGame,600);}
+  countIn(()=>{
+    G.active=true;startMetro();updateAura();
+    function loop(){
+      if(!G.active)return;
+      if(G.paused){G.raf=requestAnimationFrame(loop);return;}
+      const now=gameNow();
+      ghostUpdate(now);
+      notes.forEach(nt=>{
+        if(!nt.spawned && now>=nt.hitTime-TRAVEL){nt.spawned=true;spawnNote(nt);}
+        if(nt.spawned && !nt.hit && nt.el){
+          const prog=(now-(nt.hitTime-TRAVEL))/TRAVEL; // 0..1
+          // note is 52px tall with a -50px translate baseline; at prog=1 its
+          // CENTER should sit on TARGET_Y (the character's head)
+          const y=-50+prog*(TARGET_Y+50-26);
+          nt.el.style.transform=`translate(-50%,${y}px)`;
+          if(nt.el.firstElementChild)nt.el.firstElementChild.style.setProperty('--spin',Math.max(.32,1.5-Math.max(0,prog)*1.25)+'s');
+          if(now>nt.hitTime+250){nt.hit=true;nt.el.remove();registerMiss();charReact('miss');}
+        }
+      });
+      if(notes.every(nt=>nt.hit)){finish();return;}
+      G.raf=requestAnimationFrame(loop);
+    }
+    G.raf=requestAnimationFrame(loop);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAPTER 3 — THE BEAT LANE (Guitar Hero, one string. Dots scroll left,
+// tap each as it crosses the line. Triplets render as 3 dots under a
+// bracket, evenly spaced — the "3 against straight time" feel is SEEN,
+// not guessed. No aiming, no lane choice — this is Ch2's Drop pattern,
+// horizontal, with grouping added for triplets.)
+// ═══════════════════════════════════════════════════════════════════
+function gamePulse(ch){
+  const stage=document.getElementById('stage');
+  const W=stage.offsetWidth,H=stage.offsetHeight;
+  const LANE_Y=H*0.38,LANE_H=96;
+  const HIT_X=W*0.24;
+  const SPAWN_X=W-40; // notes enter from the right edge and travel left to the line
+  const TRAVEL_DIST=SPAWN_X-HIT_X;
+
+  const lane=document.createElement('div');
+  lane.className='lane-tex lane-soft';
+  lane.style.cssText=`position:absolute;left:0;top:${LANE_Y}px;width:${W}px;height:${LANE_H}px;background:var(--sludge);border:1px solid #18402D;overflow:hidden;z-index:1;`;
+  stage.appendChild(lane);
+  // Character stands directly on the bar's bottom edge — same grounded layout
+  // as Chapter 4 — instead of floating below the lane.
+  const hitGlow=document.createElement('div');
+  hitGlow.style.cssText=`position:absolute;left:${HIT_X}px;top:${LANE_Y-20}px;width:26px;height:${LANE_H+40}px;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(74,166,141,.45),transparent 72%);z-index:2;transform:translateX(-50%);pointer-events:none;`;
+  stage.appendChild(hitGlow);
+  // The actual PULSE — an expanding ring timed to the beat, at the hit point.
+  // This chapter is named "Pulse" and previously had none.
+  const pulseRing=document.createElement('div');
+  pulseRing.className='pulse-ring';
+  pulseRing.style.cssText+=`left:${HIT_X}px;top:${LANE_Y+LANE_H/2}px;--pbms:${beatMs()}ms;`;
+  stage.appendChild(pulseRing);
+  const groundY=LANE_Y+LANE_H;
+  const cw=document.createElement('div');
+  cw.style.cssText=`position:absolute;left:${HIT_X}px;top:${groundY}px;transform:translate(-50%,-50%);z-index:5;`;
+  cw.innerHTML=charSVG('gc',0.8);
+  stage.appendChild(cw);
+  const pieLbl=document.createElement('div');
+  pieLbl.style.cssText=`position:absolute;left:${HIT_X}px;top:${groundY+38}px;transform:translateX(-50%);font-family:var(--font-m);font-size:11px;color:#555;letter-spacing:.1em;z-index:4;white-space:nowrap;opacity:0;transition:opacity .5s ease;`;
+  stage.appendChild(pieLbl);
+
+  const seqBase=['quarter','dotted','triplet','quarter','dotted','triplet','eighth','dotted','triplet','quarter','dotted','triplet','quarter','eighth','dotted','triplet','quarter','dotted','triplet','eighth','dotted','quarter'];
+  const seq=[];while(seq.reduce((s,k)=>s+N[k].beats,0)<64){seq.push(...shuffle(seqBase));} // ≥16 bars
+  const BMS=beatMs();
+  const SPEED=scrollSpeed();
+  const TRAVEL=TRAVEL_DIST/SPEED*1000;
+
+  const ghostUpdate=makeGhostGrid(lane,TRAVEL,BMS/2,(el,prog,age)=>{
+    const x=SPAWN_X-TRAVEL_DIST*prog-2.5;
+    el.style.transform=`translate(${x}px,${LANE_H/2-2.5}px)`;
+    el.style.opacity=age<80?String(Math.min(1,age/80)*.4):(age<250?'.4':String(Math.max(0,.4-(age-250)/200)));
+  });
+
+  // Flatten into individual tap events, grouping triplets by groupId so their
+  // 3 dots can share one rigid moving wrapper (see spawnGroup below).
+  const timeline=[],groups=[];
+  let t=quantizeLead(BMS,Math.max(BMS*2,TRAVEL+BMS)),gid=0;
+  seq.forEach(key=>{
+    if(key==='triplet'){
+      const unitDur=(2*BMS)/3; // 3 evenly-spaced hits across 2 beats
+      const entries=[];
+      for(let i=0;i<3;i++){
+        const e={groupId:gid,idx:i,size:3,unitDur,sym:N.triplet.sym,symType:'triplet',color:N.triplet.color,label:N.triplet.label,pie:['1','&','a'][i],time:t,spawned:false,done:false,dotEl:null,groupEl:null,cleaned:false};
+        timeline.push(e);entries.push(e);t+=unitDur;
+      }
+      groups.push(entries);gid++;
+    } else {
+      const n=N[key];
+      const e={groupId:gid,idx:0,size:1,unitDur:n.beats*BMS,sym:n.sym,symType:n.symType,color:n.color,label:n.label,pie:n.pie,time:t,spawned:false,done:false,dotEl:null,groupEl:null,cleaned:false};
+      timeline.push(e);groups.push([e]);t+=n.beats*BMS;gid++;
+    }
+  });
+  G.totalNotes=timeline.length;
+
+  function spawnGroup(entries){
+    const g0=entries[0];
+    const isTrip=entries.length===3;
+    const spacingPx=(g0.unitDur/1000)*SPEED; // note travels at exactly SPEED px/sec now (no offset distortion), so spacing = duration × speed
+    const GROUP_W=isTrip?Math.ceil(spacingPx*2+80):80;
+    const wrapper=document.createElement('div');
+    wrapper.style.cssText=`position:absolute;left:0;top:8px;width:${GROUP_W}px;height:${LANE_H-16}px;z-index:3;pointer-events:none;transform:translateX(${SPAWN_X}px);will-change:transform;--spin:1.4s;`;
+    if(isTrip){
+      wrapper.innerHTML=`<div style="position:absolute;left:16px;right:16px;top:0;height:8px;border-top:2px solid ${g0.color};"></div>
+        <div style="position:absolute;left:0;right:0;top:1px;text-align:center;font-family:var(--font-m);font-size:8px;color:${g0.color};">3</div>`;
+    }
+    entries.forEach((e,i)=>{
+      const dx=isTrip?(i*spacingPx):((GROUP_W-64)/2);
+      const dot=document.createElement('div');
+      dot.style.cssText=`position:absolute;left:${dx}px;top:10px;width:64px;height:64px;`;
+      dot.innerHTML=`<div class="note-live" style="width:100%;height:100%;border-radius:10px;background:linear-gradient(160deg,#16321f,#0a1610);border:2px solid ${e.color};display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 22px ${e.color}88,inset 0 0 10px ${e.color}33,inset 0 1px 0 rgba(255,255,255,.08);--nc:${e.color}"><div class="swivel"></div>
+        <div style="line-height:1;z-index:1">${noteGlyph(e.symType,e.color,24)}</div><div style="font-family:var(--font-m);font-size:8px;color:${e.color};z-index:1">${e.pie}</div></div>`;
+      wrapper.appendChild(dot);e.dotEl=dot;e.groupEl=wrapper;
+    });
+    lane.appendChild(wrapper);fadeInNote(wrapper);
+  }
+
+  let pieLblTimer=null;
+  addTap(stage,()=>{
+    if(!G.active)return;
+    if(G.paused)return;
+    const now=gameNow();
+    let best=null,bestD=Infinity;
+    timeline.forEach(e=>{if(e.done||!e.spawned)return;const d=now-e.time;if(Math.abs(d)<Math.abs(bestD)){bestD=d;best=e;}});
+    if(best&&Math.abs(bestD)<220){
+      best.done=true;if(best.dotEl)best.dotEl.style.opacity='0';
+      // Readable for a full 2.2s (was 700ms — flashed and vanished before you
+      // could read it), and a new hit cleanly restarts the clock instead of
+      // fighting a pending clear from the previous one.
+      if(pieLblTimer)clearTimeout(pieLblTimer);
+      pieLbl.textContent=best.label+' — "'+best.pie+'"';pieLbl.style.color=best.color;pieLbl.style.opacity='1';
+      pieLblTimer=setTimeout(()=>{pieLbl.style.opacity='0';},2200);
+      registerHit(bestD);
+      bounceChar();
+    }
+  });
+
+  let ended=false;
+  function finish(){if(ended)return;ended=true;stopGame();setTimeout(endGame,600);}
+  countIn(()=>{
+    G.active=true;startMetro();updateAura();
+    function loop(){
+      if(!G.active)return;
+      if(G.paused){G.raf=requestAnimationFrame(loop);return;}
+      const now=gameNow();
+      ghostUpdate(now);
+      groups.forEach(entries=>{
+        const g0=entries[0];
+        if(!g0.spawned && now>=g0.time-TRAVEL){entries.forEach(e=>e.spawned=true);spawnGroup(entries);}
+        if(g0.spawned && g0.groupEl){
+          const prog=(now-(g0.time-TRAVEL))/TRAVEL;
+          const x=SPAWN_X-TRAVEL_DIST*prog-32; // -32 so the 64px dot's CENTER lands on HIT_X at its exact time, not its left edge
+          g0.groupEl.style.transform=`translateX(${x}px)`;
+          g0.groupEl.style.setProperty('--spin',Math.max(.3,1.4-Math.max(0,prog)*1.15)+'s');
+          if(x<-140 && !g0.cleaned){g0.cleaned=true;g0.groupEl.remove();}
+        }
+      });
+      timeline.forEach(e=>{
+        if(e.spawned && !e.done && now>e.time+220){
+          e.done=true;registerMiss();charReact('miss');
+          if(e.dotEl){e.dotEl.style.transition='opacity .2s';e.dotEl.style.opacity='.15';}
+        }
+      });
+      if(timeline.every(e=>e.done)){finish();return;}
+      G.raf=requestAnimationFrame(loop);
+    }
+    G.raf=requestAnimationFrame(loop);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAPTER 4 — THE VOID (Chrome-Dino jump: hop the notes, run through rests)
+// ═══════════════════════════════════════════════════════════════════
+function gameRunner(ch){ jumpRunnerEngine(ch,true); }
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAPTER 5 — THE DRUM MACHINE (1 e + a as a scrolling sequencer strip.
+// Each beat is a 4-cell group — active cells are lit and tappable, empty
+// cells are ghost outlines you read past with no input needed. Same
+// tap-timing engine as Beat Lane and Conductor: pure timing, no flying,
+// no spatial aiming.)
+// ═══════════════════════════════════════════════════════════════════
+function gameGates(ch){
+  const stage=document.getElementById('stage');
+  const W=stage.offsetWidth,H=stage.offsetHeight;
+  const LANE_Y=H*0.38,LANE_H=96;
+  const HIT_X=W*0.24;
+  const SPAWN_X=W-40;
+  const TRAVEL_DIST=SPAWN_X-HIT_X;
+
+  const lane=document.createElement('div');
+  lane.className='lane-tex lane-soft';
+  lane.style.cssText=`position:absolute;left:0;top:${LANE_Y}px;width:${W}px;height:${LANE_H}px;background:var(--sludge);border:1px solid #18402D;overflow:hidden;z-index:1;`;
+  stage.appendChild(lane);
+  const hitGlow=document.createElement('div');
+  hitGlow.style.cssText=`position:absolute;left:${HIT_X}px;top:${LANE_Y-20}px;width:26px;height:${LANE_H+40}px;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(74,166,141,.45),transparent 72%);z-index:2;transform:translateX(-50%);pointer-events:none;`;
+  stage.appendChild(hitGlow);
+  const groundY=LANE_Y+LANE_H;
+  const cw=document.createElement('div');
+  cw.style.cssText=`position:absolute;left:${HIT_X}px;top:${groundY}px;transform:translate(-50%,-50%);z-index:5;`;
+  cw.innerHTML=charSVG('gc',0.8);
+  stage.appendChild(cw);
+
+  // 16 bars, 4 beats each, each beat = 4 cells [1,e,+,a]. Pre-set patterns that
+  // progress from sparse (quarter feel) to dense (full 16ths), so the player reads
+  // "1 +" as a different shape from "1 e + a" and builds up gradually.
+  const barPool=[
+    [[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0]], // all quarters
+    [[1,0,1,0],[1,0,1,0],[1,0,1,0],[1,0,1,0]], // 1 + feel (eighths)
+    [[1,0,1,0],[1,0,0,0],[1,0,1,0],[1,0,0,0]],
+    [[1,0,1,1],[1,0,1,0],[1,0,1,1],[1,0,1,0]],
+    [[1,1,1,1],[1,0,1,0],[1,1,1,1],[1,0,1,0]], // full 16ths on 1 and 3
+    [[1,0,1,0],[1,1,1,1],[1,0,1,0],[1,1,1,1]],
+    [[1,1,0,1],[1,0,1,0],[1,1,0,1],[1,0,1,0]], // 1 e _ a syncopation
+    [[1,1,1,1],[1,1,1,1],[1,0,1,0],[1,0,0,0]],
+  ];
+  const bars=[];
+  for(let i=0;i<16;i++){
+    bars.push(i<barPool.length ? barPool[i] : barPool[Math.floor(Math.random()*barPool.length)]);
+  }
+  const subLabels=['1','e','+','a'];
+  const BMS=beatMs();
+  const subDur=BMS/4;
+  const SPEED=scrollSpeed()*1.15; // gentle bump (not 2.1×) — cells are smaller now so this alone prevents overlap without cramming the travel window
+  const TRAVEL=TRAVEL_DIST/SPEED*1000;
+
+  const timeline=[],groups=[];
+  let t=quantizeLeadBar(BMS,Math.max(BMS*2,TRAVEL+BMS)),gid=0;
+  bars.forEach(bar=>{
+    bar.forEach((beatPattern,bi)=>{
+      const entries=[];
+      beatPattern.forEach((active,si)=>{
+        const e={groupId:gid,idx:si,active:!!active,label:subLabels[si],beatNum:bi+1,time:t,spawned:false,done:false,cellEl:null,groupEl:null,cleaned:false};
+        timeline.push(e);entries.push(e);t+=subDur;
+      });
+      groups.push(entries);gid++;
+    });
+  });
+  G.totalNotes=timeline.filter(e=>e.active).length;
+
+  function spawnGroup(entries){
+    const spacingPx=(subDur/1000)*SPEED; // pure SPEED now
+    const CELL_W=42;
+    const GROUP_W=Math.ceil(spacingPx*3+CELL_W+24);
+    const wrapper=document.createElement('div');
+    wrapper.style.cssText=`position:absolute;left:0;top:10px;width:${GROUP_W}px;height:${LANE_H-20}px;z-index:3;pointer-events:none;transform:translateX(${SPAWN_X}px);will-change:transform;--spin:1.3s;`;
+    wrapper.innerHTML=`<div style="position:absolute;left:0;top:-18px;font-family:var(--font-m);font-size:9px;color:#555;letter-spacing:.1em;">BEAT ${entries[0].beatNum}</div>`;
+    entries.forEach((e,i)=>{
+      const dx=i*spacingPx;
+      const cell=document.createElement('div');
+      cell.style.cssText=`position:absolute;left:${dx}px;top:6px;width:${CELL_W}px;height:${CELL_W}px;`;
+      if(e.active){
+        cell.innerHTML=`<div class="note-live" style="width:100%;height:100%;border-radius:8px;background:linear-gradient(160deg,#16321f,#0a1610);border:2px solid var(--fire);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 18px #FF850088,inset 0 0 8px #FF850033,inset 0 1px 0 rgba(255,255,255,.08);--nc:#FF8500"><div class="swivel"></div>
+          <div style="line-height:1;z-index:1">${noteGlyph('sixteenth','#FF8500',20)}</div>
+          <div style="font-family:var(--font-m);font-size:8px;font-weight:700;color:var(--fire);z-index:1;margin-top:1px">${e.label}</div></div>`;
+      } else {
+        // Empty subdivision — just a faint centered tick, not a full box, so it
+        // reads as a grid guide and doesn't compete with the real note cells.
+        cell.innerHTML=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+          <div style="font-family:var(--font-m);font-size:8px;color:#2a3a30;">${e.label}</div></div>`;
+      }
+      wrapper.appendChild(cell);e.cellEl=cell;e.groupEl=wrapper;
+    });
+    // Beam connectors — a thin bar joining consecutive ACTIVE cells, exactly
+    // like the beam that links eighth/16th note stems on a real staff. Makes
+    // the pattern read as connected rhythm, not isolated boxes.
+    for(let i=0;i<entries.length-1;i++){
+      if(entries[i].active&&entries[i+1].active){
+        const x1=i*spacingPx+CELL_W/2,x2=(i+1)*spacingPx+CELL_W/2;
+        const beam=document.createElement('div');
+        beam.style.cssText=`position:absolute;left:${x1}px;top:2px;width:${x2-x1}px;height:3px;background:var(--fire);opacity:.8;border-radius:2px;z-index:2;box-shadow:0 0 5px #FF850099;pointer-events:none;`;
+        wrapper.appendChild(beam);
+      }
+    }
+    lane.appendChild(wrapper);fadeInNote(wrapper);
+  }
+
+  addTap(stage,()=>{
+    if(!G.active)return;
+    if(G.paused)return;
+    const now=gameNow();
+    // Match ACTIVE cells first — Ch2's proven priority. A tap aimed at a real
+    // note must never lose to an adjacent silent subdivision just because the
+    // silent one happens to be a few ms closer in time. This was the root
+    // cause of the "wrong column" / mis-registered taps in this chapter.
+    let best=null,bestD=Infinity;
+    timeline.forEach(e=>{if(e.done||!e.spawned||!e.active)return;const d=now-e.time;if(Math.abs(d)<Math.abs(bestD)){bestD=d;best=e;}});
+    if(best&&Math.abs(bestD)<250){
+      best.done=true;
+      if(best.cellEl){best.cellEl.style.transition='opacity .15s';best.cellEl.style.opacity='0';}
+      registerHit(bestD);
+      bounceChar();
+      return;
+    }
+    // No active note in range — check for a nearby unbroken silent subdivision,
+    // tighter window so it can never outcompete a real note that's close.
+    let bestRest=null,bestRestD=Infinity;
+    timeline.forEach(e=>{if(e.done||!e.spawned||e.active)return;const d=now-e.time;if(Math.abs(d)<Math.abs(bestRestD)){bestRestD=d;bestRest=e;}});
+    if(bestRest&&Math.abs(bestRestD)<130){
+      bestRest.done=true;
+      if(bestRest.cellEl){const inner=bestRest.cellEl.querySelector('div');if(inner)inner.style.color='#FF3838';bestRest.cellEl.style.transition='opacity .15s';bestRest.cellEl.style.opacity='.25';}
+      registerRestBreak();
+      return;
+    }
+    whiffTick();
+  });
+
+  let ended=false;
+  function finish(){if(ended)return;ended=true;stopGame();setTimeout(endGame,600);}
+  countIn(()=>{
+    G.active=true;startMetro();updateAura();
+    function loop(){
+      if(!G.active)return;
+      if(G.paused){G.raf=requestAnimationFrame(loop);return;}
+      const now=gameNow();
+      groups.forEach(entries=>{
+        const g0=entries[0];
+        if(!g0.spawned && now>=g0.time-TRAVEL){entries.forEach(e=>e.spawned=true);spawnGroup(entries);}
+        if(g0.spawned && g0.groupEl){
+          const prog=(now-(g0.time-TRAVEL))/TRAVEL;
+          const x=SPAWN_X-TRAVEL_DIST*prog-32; // -32 centers the 64px cell on HIT_X at its exact time
+          g0.groupEl.style.transform=`translateX(${x}px)`;
+          g0.groupEl.style.setProperty('--spin',Math.max(.3,1.3-Math.max(0,prog)*1.05)+'s');
+          if(x<-160 && !g0.cleaned){g0.cleaned=true;g0.groupEl.remove();}
+        }
+      });
+      timeline.forEach(e=>{
+        if(e.spawned && !e.done && now>e.time+200){
+          e.done=true;
+          if(e.active){
+            registerMiss();charReact('miss');
+            if(e.cellEl){const inner=e.cellEl.querySelector('div');if(inner)inner.style.borderColor='#FF3838';e.cellEl.style.transition='opacity .2s';e.cellEl.style.opacity='.25';}
+          }
+        }
+      });
+      if(timeline.every(e=>e.done)){finish();return;}
+      G.raf=requestAnimationFrame(loop);
+    }
+    G.raf=requestAnimationFrame(loop);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAPTER 6 — THE CONDUCTOR (Master: 4 lanes = 4 beats of the bar.
+// Everything learned, combined: duration, subdivision, rests, triplets.)
+// ═══════════════════════════════════════════════════════════════════
+function gameConductor(ch){
+  // ═══ THE CONDUCTOR — VERTICAL GUITAR HERO ═══
+  // 4 columns, notes FALL from the top, hit pads near the bottom. No side-scroll:
+  // on a phone your thumbs sit at the bottom edge, exactly where the pads are,
+  // and the falling notes stay visible above them the whole way down.
+  const stage=document.getElementById('stage');
+  const W=stage.offsetWidth,H=stage.offsetHeight;
+  const COLS=4;
+  // Cap the actual play width on desktop — on a wide monitor, 4 columns
+  // spanning the full window means dragging the mouse hundreds of extra
+  // pixels between columns for no reason. Center a comfortable fixed-width
+  // play area instead; only mobile (narrow) screens use the full width.
+  const PLAY_W=Math.min(W,560);
+  const PLAY_X0=(W-PLAY_W)/2;
+  const colW=PLAY_W/COLS;
+  const PAD_H=64;
+  const HIT_Y=H*0.60;             // natural thumb-reach zone — roughly a quarter of the way up from the bottom, not jammed at the edge where the brain can't register it
+  const NOTE_W=Math.min(76,colW*0.78),NOTE_H=52;
+  const colColors=['#4AA68D','#FF8500','#00E5FF','#4AA68D'];
+
+  // Column guides — soft vertical light bands, faded at both ends (no hard boxes)
+  const colEls=[];
+  for(let i=0;i<COLS;i++){
+    const col=document.createElement('div');
+    col.className='lane-tex';
+    col.style.cssText=`position:absolute;left:${PLAY_X0+i*colW}px;top:0;width:${colW}px;height:100%;background:linear-gradient(to bottom,transparent,rgba(20,40,30,.26) 20%,rgba(20,40,30,.26) 80%,transparent);border-left:${i>0?'1px solid rgba(24,64,45,.35)':'none'};overflow:hidden;z-index:1;`;
+    stage.appendChild(col);colEls.push(col);
+    // Beat-number header, small, top of column
+    const hdr=document.createElement('div');
+    hdr.style.cssText=`position:absolute;left:${PLAY_X0+i*colW}px;top:6px;width:${colW}px;text-align:center;font-family:var(--font-m);font-size:13px;font-weight:700;color:#555;z-index:2;transition:color .3s;`;
+    hdr.textContent=String(i+1);
+    stage.appendChild(hdr);colEls[i]._hdr=hdr;
+  }
+
+  const BMS=beatMs();
+  const SPEED=scrollSpeed();
+  // CRITICAL: this distance must exactly match what the render loop uses below
+  // (HIT_Y + PAD_H/2 + noteH + 10) or the note's judged hit-time and its visual
+  // arrival at the pad drift apart — which is exactly what caused the "off-beat"
+  // feel. Using NOTE_H here (not the per-note noteH) is fine because it's only
+  // ~1 frame of drift for hold bars, and TRAVEL is a fixed constant anyway; the
+  // per-note `y` formula below is what actually has to be correct per-note.
+  const FALL_DIST=HIT_Y+PAD_H/2+NOTE_H+10;
+  const TRAVEL=FALL_DIST/SPEED*1000;
+
+  // Hit pads — the ONE standard soft-glow cue, pad-shaped, pulsing on the beat
+  const pads=[];
+  for(let i=0;i<COLS;i++){
+    const pad=document.createElement('div');
+    pad.className='hit-pad';
+    pad.style.cssText+=`left:${PLAY_X0+i*colW+(colW-NOTE_W)/2-6}px;top:${HIT_Y-6}px;width:${NOTE_W+12}px;height:${PAD_H}px;animation:padPulse ${BMS}ms ease-in-out infinite;`;
+    stage.appendChild(pad);pads.push(pad);
+  }
+
+  // Round banner
+  const banner=document.createElement('div');
+  banner.style.cssText=`position:absolute;left:50%;top:${H*0.30}px;transform:translateX(-50%);font-family:var(--font-m);font-size:12px;letter-spacing:.2em;color:var(--cyan);opacity:0;transition:opacity .4s;z-index:10;text-align:center;pointer-events:none;white-space:nowrap;max-width:94vw;`;
+  stage.appendChild(banner);
+  function showBanner(text){banner.textContent=text;banner.style.opacity='1';setTimeout(()=>{banner.style.opacity='0';},1700);}
+
+  // Character below the pads, center — reacts to every hit like all chapters
+  const cw=document.createElement('div');
+  cw.style.cssText=`position:absolute;left:${PLAY_X0+PLAY_W/2}px;top:${HIT_Y+PAD_H+44}px;transform:translate(-50%,-50%);z-index:5;`;
+  cw.innerHTML=charSVG('gc',0.72);
+  stage.appendChild(cw);
+
+  // ---- Note-cell generators. Each cell fills exactly one beat. ----
+  const mkQuarter=(l)=>[{dur:1,tap:true,hold:false,sym:N.quarter.sym,symType:'quarter',color:colColors[l],pie:'1'}];
+  const mkRest=()=>[{dur:1,tap:false,hold:false,sym:N.qrest.sym,symType:'qrest',color:'#333',pie:''}];
+  const mkEighths=(l)=>[{dur:.5,tap:true,hold:false,sym:N.eighth.sym,symType:'eighth',color:colColors[l],pie:'1'},{dur:.5,tap:true,hold:false,sym:N.eighth.sym,symType:'eighth',color:colColors[l],pie:'+'}];
+  const mkEighthRest=(l)=>{
+    const noteFirst=Math.random()<0.5;
+    const note={dur:.5,tap:true,hold:false,sym:N.eighth.sym,symType:'eighth',color:colColors[l],pie:noteFirst?'1':'+'};
+    const rest={dur:.5,tap:false,hold:false,sym:N.erest.sym,symType:'erest',color:'#333',pie:noteFirst?'+':'1'};
+    return noteFirst?[note,rest]:[rest,note];
+  };
+  const mkTriplet=()=>[0,1,2].map(i=>({dur:1/3,tap:true,hold:false,sym:N.triplet.sym,symType:'triplet',color:N.triplet.color,pie:['1','&','a'][i]}));
+  const mkSustain=(l)=>[{dur:2,tap:false,hold:true,sym:N.half.sym,symType:'half',color:colColors[l],pie:'hold'}];
+
+  function genBar(opts){
+    const beats=[];
+    for(let lane=0;lane<COLS;lane++){
+      if(opts.tripletLane===lane){beats.push(mkTriplet());continue;}
+      const pool=opts.allowRest
+        ?['quarter','eighths','rest','eighthrest']
+        :(opts.allowSustain?['quarter','eighths','sustain','quarter']:['quarter','eighths']);
+      const kind=pool[Math.floor(Math.random()*pool.length)];
+      if(kind==='quarter')beats.push(mkQuarter(lane));
+      else if(kind==='eighths')beats.push(mkEighths(lane));
+      else if(kind==='rest')beats.push(mkRest());
+      else if(kind==='sustain')beats.push(mkSustain(lane));
+      else beats.push(mkEighthRest(lane));
+    }
+    return beats;
+  }
+
+  const roundDefs=[
+    {name:'ROUND 1 · STRAIGHT TIME',bars:6,allowRest:false,tripletLane:null,allowSustain:false},
+    {name:'ROUND 2 · SILENCE ENTERS',bars:5,allowRest:true,tripletLane:null,allowSustain:false},
+    {name:'ROUND 3 · LANE 3 GOES TRIPLET',bars:5,allowRest:true,tripletLane:2,allowSustain:false},
+    {name:'ROUND 4 · SUSTAINS — HOLD THE LINE',bars:4,allowRest:false,tripletLane:null,allowSustain:true},
+  ];
+
+  const timeline=[];
+  const roundMarkers=[];
+  let t=quantizeLeadBar(BMS,Math.max(BMS*2,TRAVEL+BMS));
+  // ONE central ghost grid (falling ticks) — enough of a click-track without 4× the DOM
+  const ghostUpdate=makeGhostGrid(stage,TRAVEL,BMS/2,(el,prog,age)=>{
+    const y=-20+Math.max(0,prog)*(FALL_DIST+20);
+    el.style.transform=`translate(${PLAY_X0+PLAY_W/2-2.5}px,${y}px)`;
+    el.style.opacity=age<80?String(Math.min(1,age/80)*.3):(age<250?'.3':String(Math.max(0,.3-(age-250)/200)));
+  });
+  roundDefs.forEach(r=>{
+    roundMarkers.push({time:t,name:r.name,tripletLane:r.tripletLane,shown:false});
+    for(let b=0;b<r.bars;b++){
+      const beats=genBar(r);
+      beats.forEach((cells,lane)=>{
+        cells.forEach(cell=>{
+          timeline.push({lane,tap:cell.tap,hold:cell.hold||false,
+            durMs:(cell.hold?cell.dur*BMS:0),
+            sym:cell.sym,symType:cell.symType,color:cell.color,pie:cell.pie,time:t,
+            spawned:false,done:false,el:null,pressed:false,pressT:0,barH:0});
+          t+=cell.dur*BMS;
+        });
+      });
+    }
+  });
+  G.totalNotes=timeline.filter(x=>x.tap||x.hold).length;
+
+  function colX(lane){return PLAY_X0+lane*colW+(colW-NOTE_W)/2;}
+
+  function spawnNote(nt){
+    const el=document.createElement('div');
+    const x=colX(nt.lane);
+    if(nt.hold){
+      const barH=Math.max(70,Math.min(H*0.5,(nt.durMs/1000)*SPEED));
+      nt.barH=barH;
+      el.className='note-live';
+      el.style.cssText=`position:absolute;left:${x}px;top:0;width:${NOTE_W}px;height:${barH}px;background:linear-gradient(160deg,#162830,#091610);border:2px solid ${nt.color};border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:8px;z-index:3;pointer-events:none;transform:translateY(${-barH-10}px);will-change:transform;box-shadow:0 0 22px ${nt.color}88,inset 0 0 12px ${nt.color}33;`;
+      el.style.setProperty('--nc',nt.color);el.style.setProperty('--spin','1.8s');
+      el.innerHTML=`<div class="swivel"></div><div style="line-height:1;z-index:1">${noteGlyph(nt.symType,nt.color,18)}</div><div style="font-family:var(--font-m);font-size:7px;color:${nt.color};z-index:1">HOLD</div>`;
+    } else if(nt.tap){
+      el.className='note-live';
+      el.style.cssText=`position:absolute;left:${x}px;top:0;width:${NOTE_W}px;height:${NOTE_H}px;background:linear-gradient(160deg,#16321f,#0a1610);border:2px solid ${nt.color};border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;pointer-events:none;transform:translateY(-60px);will-change:transform;box-shadow:0 0 20px ${nt.color}88,inset 0 0 8px ${nt.color}33;`;
+      el.style.setProperty('--nc',nt.color);el.style.setProperty('--spin','1.3s');
+      el.innerHTML=`<div class="swivel"></div><div style="line-height:1;z-index:1">${noteGlyph(nt.symType,nt.color,16)}</div><div style="font-family:var(--font-m);font-size:7px;color:${nt.color};z-index:1">${nt.pie}</div>`;
+    } else {
+      el.style.cssText=`position:absolute;left:${x+3}px;top:0;width:${NOTE_W-6}px;height:${NOTE_H}px;background:#000;border:2px dashed #333;border-radius:8px;z-index:3;pointer-events:none;transform:translateY(-60px);will-change:transform;`;
+    }
+    stage.appendChild(el);fadeInNote(el);nt.el=el;
+  }
+
+  // Full-height column touch zones — a thumb anywhere in the column counts.
+  const laneHeld=[null,null,null,null];
+  for(let i=0;i<COLS;i++){
+    const zone=document.createElement('div');
+    zone.style.cssText=`position:absolute;left:${PLAY_X0+i*colW}px;top:0;width:${colW}px;height:100%;z-index:12;`;
+    stage.appendChild(zone);
+    const laneIdx=i;
+    addHold(zone,
+      ()=>{ // PRESS
+        if(!G.active||G.paused)return;
+        const now=gameNow();
+        pads[laneIdx].classList.add('lit');
+        let bestH=null,bestHD=Infinity;
+        timeline.forEach(nt=>{if(nt.done||!nt.hold||!nt.spawned||nt.lane!==laneIdx)return;const d=now-nt.time;if(Math.abs(d)<Math.abs(bestHD)){bestHD=d;bestH=nt;}});
+        if(bestH&&Math.abs(bestHD)<260){
+          bestH.pressed=true;bestH.pressT=now;laneHeld[laneIdx]=bestH;
+          if(bestH.el){bestH.el.style.borderColor='#4AA68D';bestH.el.style.boxShadow='0 0 28px rgba(74,166,141,.8)';}
+          startDrone();
+          return;
+        }
+        let best=null,bestD=Infinity;
+        timeline.forEach(nt=>{if(nt.done||!nt.tap||!nt.spawned||nt.lane!==laneIdx)return;const d=now-nt.time;if(Math.abs(d)<Math.abs(bestD)){bestD=d;best=nt;}});
+        if(best&&Math.abs(bestD)<260){
+          best.done=true;
+          if(best.el){const nl=best.el;nl.classList.add('hit');nl.style.transition='opacity .18s';nl.style.opacity='0';setTimeout(()=>nl.remove(),200);}
+          bounceChar();
+          registerHit(bestD);
+        } else { whiffTick(); }
+      },
+      ()=>{ // RELEASE
+        pads[laneIdx].classList.remove('lit');
+        if(!G.active||G.paused)return;
+        const nt=laneHeld[laneIdx];laneHeld[laneIdx]=null;
+        if(!nt)return;
+        stopDrone();
+        const now=gameNow();
+        const held=now-nt.pressT;
+        const pressOffset=nt.pressT-nt.time;
+        nt.done=true;
+        if(nt.el){nt.el.style.transition='opacity .15s';nt.el.style.opacity='0';}
+        registerHold(pressOffset,held,nt.durMs);
+      }
+    );
+  }
+
+  let ended=false;
+  function finish(){if(ended)return;ended=true;stopGame();setTimeout(endGame,600);}
+  countIn(()=>{
+    G.active=true;startMetro();updateAura();
+    function loop(){
+      if(!G.active)return;
+      if(G.paused){G.raf=requestAnimationFrame(loop);return;}
+      const now=gameNow();
+      ghostUpdate(now);
+      roundMarkers.forEach(m=>{
+        if(!m.shown && now>=m.time-BMS*1.5){
+          m.shown=true;showBanner(m.name);
+          if(m.tripletLane!=null){colEls[m.tripletLane]._hdr.style.color='#B388FF';}
+        }
+      });
+      timeline.forEach(nt=>{
+        if(!nt.spawned && now>=nt.time-TRAVEL){nt.spawned=true;spawnNote(nt);}
+        if(nt.spawned && !nt.done && nt.el){
+          const prog=(now-(nt.time-TRAVEL))/TRAVEL;
+          // note BOTTOM edge lands on the pad center at its exact time — uses
+          // the SAME distance as TRAVEL above, so prog=1 and "note at pad" are
+          // truly the same instant, for every note including hold bars.
+          const noteH=nt.hold?nt.barH:NOTE_H;
+          const y=-noteH-10+prog*FALL_DIST;
+          nt.el.style.transform=`translateY(${y}px)`;
+          if(nt.tap)nt.el.style.setProperty('--spin',Math.max(.3,1.3-Math.max(0,prog)*1.05)+'s');
+          // Pad brightens as the note gets close — makes the wiggle-room window
+          // visually obvious instead of a hidden number, so it reads as generous.
+          // Skipped while the pad is actively lit (finger down) so we don't fight
+          // that CSS class's own box-shadow.
+          if(pads[nt.lane]&&!pads[nt.lane].classList.contains('lit')){
+            if(prog>0.7&&prog<1.4){
+              const near=1-Math.min(1,Math.abs(prog-1)/0.4);
+              pads[nt.lane].style.boxShadow=`0 0 ${8+near*22}px rgba(74,166,141,${0.3+near*0.5})`;
+            } else {
+              pads[nt.lane].style.boxShadow='';
+            }
+          }
+          if(nt.hold){
+            if(nt.pressed){
+              const holdProg=(now-nt.pressT)/nt.durMs;
+              swellDrone(holdProg);
+              nt.el.style.setProperty('--spin',Math.max(.35,1.8-holdProg*1.5)+'s');
+            }
+            if(now>nt.time+nt.durMs+300 && !nt.pressed){
+              nt.done=true;registerMiss();charReact('miss');
+              nt.el.style.borderColor='#FF3838';nt.el.style.transition='opacity .22s';nt.el.style.opacity='0';
+            }
+            if(y>H+40){nt.done=true;nt.el.remove();}
+          } else if(nt.tap){
+            if(now>nt.time+200){
+              nt.done=true;registerMiss();charReact('miss');
+              nt.el.style.borderColor='#FF3838';nt.el.style.transition='opacity .22s';nt.el.style.opacity='0';
+              const deadEl=nt.el;setTimeout(()=>deadEl.remove(),240);
+            }
+          } else {
+            if(now>nt.time+200){
+              nt.done=true;registerRestPass();charReact('dark');
+              nt.el.style.transition='opacity .22s';nt.el.style.opacity='0';
+              const deadEl=nt.el;setTimeout(()=>deadEl.remove(),240);
+            }
+          }
+          if(y>H+60&&nt.el)nt.el.remove();
+        }
+      });
+      if(timeline.every(nt=>nt.done)){finish();return;}
+      G.raf=requestAnimationFrame(loop);
+    }
+    G.raf=requestAnimationFrame(loop);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// END GAME + RESULTS
+// ═══════════════════════════════════════════════════════════════════
+// Score count-up — ticks the number rapidly instead of snapping instantly,
+// classic slot-machine "watch it add up" reveal.
+function countUpTo(el,target,ms){
+  const start=performance.now();
+  function step(now){
+    const p=Math.min(1,(now-start)/ms);
+    const eased=1-Math.pow(1-p,3);
+    el.textContent=Math.round(target*eased);
+    if(p<1)requestAnimationFrame(step);else el.textContent=target;
+  }
+  requestAnimationFrame(step);
+}
+// Confetti-style burst for a strong result — the "big payout" reveal moment.
+function celebrationBurst(color){
+  const host=document.getElementById('result-screen');if(!host)return;
+  const cx=host.offsetWidth/2,cy=host.offsetHeight*0.32;
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');
+    const ang=Math.random()*Math.PI*2,dist=60+Math.random()*220;
+    const c=Math.random()<0.5?color:'#fff';
+    el.style.cssText=`position:absolute;left:${cx}px;top:${cy}px;width:${3+Math.random()*4}px;height:${3+Math.random()*4}px;border-radius:${Math.random()<0.5?'50%':'2px'};background:${c};box-shadow:0 0 6px ${c};pointer-events:none;z-index:30;--bx:${Math.cos(ang)*dist}px;--by:${Math.sin(ang)*dist-40}px;animation:burstOut ${.7+Math.random()*.5}s ease-out forwards;`;
+    host.appendChild(el);setTimeout(()=>el.remove(),1300);
+  }
+}
+// ═══════════════ LOCAL LEADERBOARD ═══════════════
+// This is a single-file, no-backend game — there's no server to host a real
+// cross-player leaderboard. This is an honest on-device top-scores list per
+// chapter, stored in localStorage. (This file is a standalone .html, not a
+// Claude Artifact, so localStorage is fully supported here.)
+const LB_KEY='rhythmTrials_leaderboard_v1';
+function loadBoard(){try{return JSON.parse(localStorage.getItem(LB_KEY))||{};}catch(e){return {};}}
+function saveBoard(b){try{localStorage.setItem(LB_KEY,JSON.stringify(b));}catch(e){}}
+function submitScore(chapterId,score,pct){
+  const board=loadBoard();
+  const key='ch'+chapterId;
+  const list=board[key]||[];
+  const entry={score,pct,date:Date.now()};
+  list.push(entry);
+  list.sort((a,b)=>b.score-a.score);
+  const top=list.slice(0,10);
+  board[key]=top;
+  saveBoard(board);
+  const rank=top.indexOf(entry); // -1 if it didn't make the cut
+  return {top,rank};
+}
+function renderBoard(rows,youRank){
+  const el=document.getElementById('res-board-rows');if(!el)return;
+  if(!rows.length){el.innerHTML='<div style="font-family:var(--font-m);font-size:11px;color:#556;text-align:center;padding:8px 0;">No runs yet — you are first on the board.</div>';return;}
+  el.innerHTML=rows.map((r,i)=>`<div class="res-board-row${i===youRank?' you':''}"><div class="rk">#${i+1}</div><div class="rn">${i===youRank?'YOU — JUST NOW':new Date(r.date).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</div><div class="rs">${r.score} <span style="color:#556;font-size:10px">· ${r.pct}%</span></div></div>`).join('');
+}
+
+// Rotating coaching CTA — varied so it doesn't feel like the same nag every
+// run, but always genuinely tied to what the run showed.
+const CTA_MSGS_GOOD=[
+  "You're close to locking this in. A live ear catches the last 5% a screen can't.",
+  "That was clean. Want to build on it? A 1-on-1 session sharpens exactly this.",
+  "Solid run. The next level of tightness comes from real-time feedback — that's what a session's for.",
+  "You've got the shape of it. Let's refine the feel together.",
+];
+const CTA_MSGS_ROUGH=[
+  "Timing is a feel thing before it's a practice thing — a session can shortcut a lot of this.",
+  "Everyone gets stuck exactly where you are right now. A live session fixes it fast.",
+  "This is normal at this stage. Want a faster way through it? Let's work on it 1-on-1.",
+  "A screen can grade you, but it can't tell you WHY you're rushing. A real ear can.",
+];
+function ctaMessage(pct){
+  const pool=pct>=75?CTA_MSGS_GOOD:CTA_MSGS_ROUGH;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function endGame(){
+  stopGame();
+  const ch=CH[G.chapter];
+  const maxPts=Math.max(1,G.totalNotes)*100;
+  const pct=Math.min(100,Math.round(G.score/maxPts*100));
+  let grade,gc;
+  if(pct>=98){grade='ARCHITECT';gc='#00E5FF';}
+  else if(pct>=90){grade='CONDUCTOR';gc='#4AA68D';}
+  else if(pct>=75){grade='IN THE POCKET';gc='#4AA68D';}
+  else if(pct>=60){grade='ALMOST THERE';gc='#FF8500';}
+  else if(pct>=40){grade='LEARNING';gc='#FF8500';}
+  else{grade='THE GRID REJECTS YOU';gc='#FF3838';}
+
+  let avg=0,consist='—';
+  if(G.offsets.length>2){
+    avg=Math.round(G.offsets.reduce((a,b)=>a+b,0)/G.offsets.length);
+    const v=G.offsets.map(x=>(x-avg)**2);
+    consist='±'+Math.round(Math.sqrt(v.reduce((a,b)=>a+b,0)/v.length))+'ms';
+  }
+  let coach='';
+  if(G.offsets.length>2){
+    const early=G.offsets.filter(x=>x<-20).length,late=G.offsets.filter(x=>x>20).length;
+    if(early>late&&early>G.offsets.length*.3) coach=`You're hitting ${Math.abs(avg)}ms EARLY — you're ahead of the beat. Relax into the click and let it come to you.`;
+    else if(late>early&&late>G.offsets.length*.3) coach=`You're ${Math.abs(avg)}ms LATE — you're reacting after the beat. Anticipate: tap a hair before you think it's time.`;
+    else coach='Your timing is centered. Now tighten consistency — slow the BPM down and lock every note to the click.';
+  } else coach='Keep going — more notes played means clearer feedback. Try a slower tempo to build accuracy first.';
+  if(G.misses>G.totalNotes*.5) coach='Lots of misses — drop the BPM by 20 and try again. Accuracy first, speed follows.';
+
+  document.getElementById('res-eyebrow').textContent=`Chapter 0${G.chapter} · ${ch.name}`;
+  const rg=document.getElementById('res-grade');rg.textContent=grade;rg.style.color=gc;
+  countUpTo(document.getElementById('res-score'),G.score,900);
+  document.getElementById('res-sub').textContent=`pts · ${pct}% accuracy`;
+  document.getElementById('rs-perfect').textContent=G.hits.perfect;
+  document.getElementById('rs-good').textContent=G.hits.good;
+  document.getElementById('rs-miss').textContent=G.misses;
+  document.getElementById('rs-offset').textContent=G.offsets.length?avg+'ms':'—';
+  document.getElementById('rs-consist').textContent=consist;
+  document.getElementById('rs-combo').textContent=G.maxCombo;
+  document.getElementById('res-coach').textContent=coach;
+  document.getElementById('res-next').style.display=G.chapter<6?'':'none';
+
+  // Leaderboard — submit this run, show the on-device top 10 for this chapter
+  const {top,rank}=submitScore(G.chapter,G.score,pct);
+  renderBoard(top,rank);
+  const nh=document.getElementById('res-newhigh');
+  nh.classList.toggle('show',rank===0);
+
+  // Coaching CTA — rotates message, always points to the same booking link
+  document.getElementById('res-cta-msg').textContent=ctaMessage(pct);
+
+  show('result-screen');
+  if(pct>=75||rank===0){setTimeout(()=>{celebrationBurst(gc);buzz([20,40,20,40,60]);},250);}
+}
+</script>
+</body></html>
