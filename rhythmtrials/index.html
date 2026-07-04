@@ -293,7 +293,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font
    a soft vertical light shaft, a jagged foreground silhouette (reeds/grass)
    for depth-of-field, heavier vignette + grain. Nothing saturated except
    the brand accents bleeding faintly through the murk. */
-#title-screen{overflow:hidden;}
+#title-screen{overflow:hidden;justify-content:center;}
+.rt-play-modal{width:min(480px,94vw);}
+.rt-play-modal .ch-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
+.rt-play-modal .bpm-wrap{margin-bottom:16px;}
+#result-screen{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;justify-content:flex-start;padding-top:max(20px,3vh);padding-bottom:32px;}
 .atmos-title{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
 .atmos-title .t-void{position:absolute;inset:0;background:
   radial-gradient(70% 55% at 50% 8%, rgba(60,90,75,.16), transparent 60%),
@@ -344,7 +348,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font
 .ch-card .ct{font-size:11px;font-weight:700;text-align:center;letter-spacing:.04em;color:#c8d4c8;line-height:1.2;}
 .ch-card .cg{font-family:var(--font-m);font-size:7px;color:var(--fire);text-transform:uppercase;letter-spacing:.12em;}
 .ch-card .cb{font-family:var(--font-m);font-size:7px;color:#486454;letter-spacing:.06em;text-align:center;line-height:1.5;margin-top:2px;}
-.big-btn{padding:15px 52px;background:transparent;border:2px solid var(--slime);color:var(--slime);font-family:var(--font-d);font-size:16px;font-weight:600;letter-spacing:.2em;cursor:pointer;text-transform:uppercase;transition:all .15s;touch-action:manipulation;}
+.big-btn{padding:15px 52px;background:transparent;border:2px solid var(--slime);color:var(--slime);font-family:var(--font-d);font-size:16px;font-weight:600;letter-spacing:.2em;cursor:pointer;text-transform:uppercase;transition:all .15s;touch-action:manipulation;text-align:center;display:flex;align-items:center;justify-content:center;}
 .big-btn:active{background:var(--slime);color:#000;}
 
 /* TUTORIAL */
@@ -461,6 +465,65 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font
   box-shadow:0 0 18px rgba(255,133,0,.5);animation:ctaPulse 1.4s ease-in-out infinite;}
 @keyframes ctaPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 .res-cta a:active{transform:scale(.96);}
+/* ═══════════════ HIVE MIND PROGRESSION UI (ported) ═══════════════ */
+#rt-profile{width:min(360px,86vw);display:flex;flex-direction:column;align-items:center;gap:0;margin:2px auto 10px;}
+.rt-name{font-family:var(--font-d);font-weight:600;font-size:18px;letter-spacing:.06em;color:#fff;text-transform:uppercase;display:inline-flex;align-items:center;gap:7px;cursor:pointer;margin-bottom:5px;}
+.rt-name svg{opacity:.5;}
+.rt-rankbadge{display:inline-flex;font-family:var(--font-m);font-size:10.5px;letter-spacing:.2em;padding:4px 12px;border:1px solid var(--rc,#4AA68D);border-radius:2px;color:var(--rc,#4AA68D);margin-bottom:8px;text-transform:uppercase;box-shadow:0 0 12px color-mix(in srgb,var(--rc,#4AA68D) 35%,transparent);}
+.rt-xpwrap{width:100%;margin-bottom:9px;}
+.rt-xpwrap .bar{height:7px;background:rgba(255,255,255,.08);border-radius:5px;overflow:hidden;}
+.rt-xpwrap .bar>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--slime),var(--cyan));border-radius:5px;transition:width .5s;}
+.rt-xpwrap .lbl{display:flex;justify-content:space-between;font-family:var(--font-m);font-size:9px;color:#7c968b;margin-top:4px;letter-spacing:.08em;}
+.rt-profstats{display:flex;gap:16px;margin-bottom:12px;font-family:var(--font-m);}
+.rt-profstats .cell{text-align:center;}
+.rt-profstats .v{font-family:var(--font-d);font-size:20px;font-weight:700;color:#fff;line-height:1;}
+.rt-profstats .l{font-size:8.5px;letter-spacing:.14em;color:#7c968b;margin-top:3px;text-transform:uppercase;}
+.rt-daily{width:100%;background:linear-gradient(135deg,rgba(255,133,0,.12),rgba(0,0,0,.2));border:1px solid rgba(255,133,0,.3);border-radius:6px;padding:11px 13px;margin-bottom:12px;cursor:pointer;transition:transform .12s;}
+.rt-daily:active{transform:scale(.97);}
+.rt-daily.done{opacity:.6;border-color:rgba(74,166,141,.4);}
+.rt-daily .dh{display:flex;justify-content:space-between;align-items:center;}
+.rt-daily .dh .t{font-family:var(--font-m);font-size:9.5px;letter-spacing:.2em;color:var(--fire);text-transform:uppercase;}
+.rt-daily .dh .fl{display:inline-flex;align-items:center;gap:3px;font-family:var(--font-m);font-size:11px;color:var(--fire);}
+.rt-daily .dd{font-size:15px;font-weight:600;margin-top:3px;letter-spacing:.02em;}
+.rt-daily .ds{font-family:var(--font-m);font-size:9px;color:#93b0a4;margin-top:3px;letter-spacing:.05em;}
+.rt-prof-btns{width:100%;display:flex;gap:8px;}
+.rt-prof-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:2px;color:#cfe;font-family:var(--font-d);font-weight:600;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:transform .12s,border-color .2s;}
+.rt-prof-btn:active{transform:scale(.96);border-color:var(--slime);}
+/* result stars + xp */
+.rt-res-stars{display:flex;gap:9px;justify-content:center;margin:6px 0 8px;}
+.rt-star{opacity:.16;transition:all .3s;}
+.rt-star.lit{opacity:1;filter:drop-shadow(0 0 11px rgba(255,133,0,.7));animation:rtStarPop .4s cubic-bezier(.2,1.6,.4,1);}
+@keyframes rtStarPop{0%{transform:scale(0) rotate(-40deg)}100%{transform:scale(1) rotate(0)}}
+.rt-res-xp{width:min(400px,90vw);margin:2px auto 14px;}
+.rt-res-xp .lbl{display:flex;justify-content:space-between;font-family:var(--font-m);font-size:10px;color:#93b0a4;margin-bottom:4px;letter-spacing:.1em;}
+.rt-res-xp .bar{height:9px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden;}
+.rt-res-xp .bar>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--slime),var(--cyan));border-radius:6px;transition:width 1.1s cubic-bezier(.3,1,.4,1);}
+/* modals */
+.rt-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.rt-modal-bg.on{display:flex;}
+.rt-modal{width:min(420px,92vw);max-height:82vh;overflow-y:auto;background:linear-gradient(160deg,#0a1410,#050805);border:1px solid rgba(74,166,141,.3);border-radius:10px;padding:22px;box-shadow:0 0 50px rgba(0,0,0,.7);text-align:center;}
+.rt-modal h2{font-family:var(--font-d);font-weight:700;font-size:24px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px;color:#fff;text-align:center;}
+.rt-modal .subh{font-family:var(--font-m);font-size:10px;color:#8fb3a5;letter-spacing:.18em;margin-bottom:16px;text-transform:uppercase;text-align:center;}
+.rt-ach{display:flex;align-items:center;gap:12px;padding:11px 8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;}
+.rt-ach .ic{width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.rt-ach.locked{opacity:.4;}
+.rt-ach .info .t{font-family:var(--font-d);font-weight:600;font-size:15px;letter-spacing:.03em;text-transform:uppercase;color:#fff;}
+.rt-ach .info .d{font-family:var(--font-m);font-size:10px;color:#93b0a4;margin-top:1px;}
+.rt-ach .chk{margin-left:auto;display:flex;}
+.rt-modal-btn{width:100%;margin-top:16px;padding:14px;background:var(--fire);color:#180800;border:none;border-radius:2px;font-family:var(--font-d);font-weight:600;font-size:15px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;}
+.rt-modal-btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.22);color:#fff;}
+.rt-name-input{width:100%;background:rgba(0,0,0,.4);border:1px solid rgba(74,166,141,.4);border-radius:6px;color:#fff;font-family:var(--font-d);font-size:24px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-align:center;padding:14px;margin:8px 0 4px;outline:none;}
+.rt-name-input:focus{border-color:var(--slime);box-shadow:0 0 16px rgba(74,166,141,.3);}
+.rt-name-hint{font-family:var(--font-m);font-size:9px;color:#7c968b;text-align:center;letter-spacing:.08em;margin-bottom:12px;}
+/* toast */
+.rt-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(80px);z-index:210;background:linear-gradient(135deg,#0c1a13,#060a07);border:1px solid var(--fire);border-radius:8px;padding:12px 18px;display:flex;gap:12px;align-items:center;box-shadow:0 6px 30px rgba(0,0,0,.6);opacity:0;transition:transform .4s cubic-bezier(.2,1.4,.4,1),opacity .4s;max-width:88vw;}
+.rt-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.rt-toast .ic{width:30px;height:30px;display:flex;align-items:center;justify-content:center;}
+.rt-toast .tt{font-family:var(--font-m);font-size:9px;letter-spacing:.2em;color:var(--fire);text-transform:uppercase;}
+.rt-toast .td{font-family:var(--font-d);font-weight:600;font-size:15px;letter-spacing:.03em;text-transform:uppercase;color:#fff;}
+/* footer note */
+.rt-footer-note{width:100%;text-align:center;font-family:var(--font-m);font-size:8.5px;letter-spacing:.14em;color:#5b7268;text-transform:uppercase;margin-top:10px;}
+#pause-btn svg{vertical-align:middle;}
 </style>
 </head>
 <body>
@@ -486,18 +549,29 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font
   <div class="title-main">Rhythm<br>Trials</div>
   <div class="title-sub">Learn rhythm. Feel it first.</div>
   <div id="title-char-slot"></div>
-  <div class="bpm-wrap">
-    <div class="bpm-lbl">Tempo</div>
-    <div id="bpm-num">80</div>
-    <div class="bpm-lvl" id="bpm-lvl">DEVELOPING</div>
-    <div class="bpm-ctrl">
-      <div class="bpm-btn" id="bpm-minus">−</div>
-      <div class="bpm-btn" id="bpm-plus">+</div>
+  <div id="rt-profile"></div>
+  <div class="big-btn" id="open-play-btn" style="width:min(360px,86vw);margin-top:4px;position:relative"><span id="play-btn-ico" style="display:inline-flex;position:absolute;left:22px;top:50%;transform:translateY(-50%)"></span>PLAY</div>
+  <div class="rt-footer-note">Your progress is stored on your webpage</div>
+</div>
+
+<!-- PLAY PICKER OVERLAY -->
+<div class="rt-modal-bg" id="rt-play-modal">
+  <div class="rt-modal rt-play-modal">
+    <h2>Choose Trial</h2>
+    <div class="subh">Set tempo · pick a chapter</div>
+    <div class="bpm-wrap" style="margin-bottom:18px">
+      <div class="bpm-lbl">Tempo</div>
+      <div id="bpm-num">80</div>
+      <div class="bpm-lvl" id="bpm-lvl">DEVELOPING</div>
+      <div class="bpm-ctrl">
+        <div class="bpm-btn" id="bpm-minus">−</div>
+        <div class="bpm-btn" id="bpm-plus">+</div>
+      </div>
     </div>
+    <div class="ch-grid" id="ch-grid" style="width:100%;margin-bottom:18px"></div>
+    <div class="big-btn" id="start-btn" style="width:100%">Begin →</div>
+    <div class="rt-modal-btn ghost" id="rt-play-close" style="margin-top:10px">Close</div>
   </div>
-  <div class="ch-select-lbl">Choose your trial</div>
-  <div class="ch-grid" id="ch-grid"></div>
-  <div class="big-btn" id="start-btn">Begin →</div>
 </div>
 
 <div class="screen" id="tutorial-screen">
@@ -546,7 +620,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font
     <div class="hud-combo" id="hud-combo"></div>
     <div class="v hud-miss" style="text-align:right">MISS<b id="hud-miss">0</b></div>
   </div>
-  <button id="pause-btn" aria-label="Pause">❚❚</button>
+  <button id="pause-btn" aria-label="Pause"></button>
   <div class="combo-arcade" id="combo-arcade"></div>
   <div class="metro-row" id="metro-row"></div>
   <div id="timing-pop"></div>
@@ -566,8 +640,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font
 <div class="screen" id="result-screen">
   <div id="res-eyebrow"></div>
   <div id="res-grade"></div>
+  <div class="rt-res-stars" id="rt-res-stars"></div>
   <div id="res-score">0</div>
   <div id="res-sub"></div>
+  <div class="rt-res-xp" id="rt-res-xp"></div>
   <div class="res-stats">
     <div class="res-stat"><div class="l">Perfect</div><div class="v" id="rs-perfect" style="color:var(--slime)">0</div></div>
     <div class="res-stat"><div class="l">Good</div><div class="v" id="rs-good" style="color:var(--fire)">0</div></div>
@@ -596,6 +672,225 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font
 </div>
 <script>
 'use strict';
+// ═══════════════ HIVE MIND PROGRESSION SYSTEMS (ported from Pitch Trials) ═══════════════
+// Independent save — its own localStorage key, separate from Pitch Trials.
+const RT_SAVE_KEY='rhythmTrials_profile_v1';
+const RT_DEFAULT={
+  name:'', xp:0, lifetimeXP:0, level:1, streak:0, lastPlayed:null,
+  daily:{date:null, done:false, streak:0},
+  chapters:{}, ach:{},
+  stats:{totalPerfect:0, totalNotes:0, perfectRuns:0, maxCombo:0, runs:0}
+};
+let RS=rtLoad();
+function rtLoad(){
+  try{ const raw=localStorage.getItem(RT_SAVE_KEY); if(raw){ return Object.assign(JSON.parse(JSON.stringify(RT_DEFAULT)), JSON.parse(raw)); } }catch(e){}
+  return JSON.parse(JSON.stringify(RT_DEFAULT));
+}
+function rtPersist(){ try{ localStorage.setItem(RT_SAVE_KEY, JSON.stringify(RS)); }catch(e){} }
+
+const RT_RANKS=[
+  {min:1,name:'BEGINNER',c:'#4AA68D'},{min:5,name:'METRONOME',c:'#4AA68D'},
+  {min:10,name:'DRUMMER',c:'#00E5FF'},{min:16,name:'PRODUCER',c:'#00E5FF'},
+  {min:24,name:'ENGINEER',c:'#FF8500'},{min:34,name:'CONDUCTOR',c:'#FF8500'},
+  {min:46,name:'MASTER',c:'#FFD447'},{min:60,name:'LEGEND',c:'#FFF6C8'},
+  {min:80,name:'HIVE MIND',c:'#FF3838'},
+];
+function rtXpForLevel(lv){ return Math.round(100*Math.pow(lv,1.35)); }
+function rtRankFor(lv){ let r=RT_RANKS[0]; for(const x of RT_RANKS){ if(lv>=x.min) r=x; } return r; }
+function rtAddXP(amt){
+  RS.xp+=amt; RS.lifetimeXP+=amt; let leveled=false;
+  while(RS.xp>=rtXpForLevel(RS.level)){ RS.xp-=rtXpForLevel(RS.level); RS.level++; leveled=true; }
+  rtPersist(); return {leveled, to:RS.level, gained:amt};
+}
+
+// Brand SVG icons (no emoji)
+function rtIco(name,color,size){
+  color=color||'#4AA68D'; size=size||24;
+  const s=`width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"`;
+  const M={
+    play:`<svg ${s}><path d="M8 5 L18 12 L8 19 Z" fill="${color}"/></svg>`,
+    pause:`<svg ${s}><rect x="7" y="5" width="3.4" height="14" fill="${color}"/><rect x="13.6" y="5" width="3.4" height="14" fill="${color}"/></svg>`,
+    life:`<svg ${s}><circle cx="12" cy="10" r="6.4" fill="${color}"/><path d="M6.5 13 Q12 20 17.5 13 Z" fill="${color}"/><circle cx="9.6" cy="9.5" r="1.5" fill="#fff"/><circle cx="14.4" cy="9.5" r="1.5" fill="#fff"/></svg>`,
+    star:`<svg ${s}><path d="M12 2 L14.9 8.6 L22 9.3 L16.7 14 L18.2 21 L12 17.3 L5.8 21 L7.3 14 L2 9.3 L9.1 8.6 Z" fill="${color}"/></svg>`,
+    flame:`<svg ${s}><path d="M12 2 C13 6 17 7 17 12 C17 16 14.5 19 12 19 C9.5 19 7 16 7 12 C7 9 9 8 9.5 5 C11 6.5 11 8 12 8 C12.5 8 12 4 12 2 Z" fill="${color}"/></svg>`,
+    trophy:`<svg ${s}><path d="M7 4 H17 V9 A5 5 0 0 1 7 9 Z" fill="${color}"/><path d="M7 5 H4 V6.5 A3 3 0 0 0 7 9.5" stroke="${color}" stroke-width="1.6" fill="none"/><path d="M17 5 H20 V6.5 A3 3 0 0 1 17 9.5" stroke="${color}" stroke-width="1.6" fill="none"/><rect x="10.6" y="13" width="2.8" height="4" fill="${color}"/><rect x="7" y="17" width="10" height="2.4" rx="1" fill="${color}"/></svg>`,
+    check:`<svg ${s}><path d="M4 12 L9.5 18 L20 5.5" stroke="${color}" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    lock:`<svg ${s}><rect x="5" y="10" width="14" height="10" rx="2" fill="${color}"/><path d="M8 10 V7.5 A4 4 0 0 1 16 7.5 V10" stroke="${color}" stroke-width="2" fill="none"/></svg>`,
+    bolt:`<svg ${s}><path d="M13 2 L5 13 L11 13 L10 22 L19 10 L13 10 Z" fill="${color}"/></svg>`,
+    metro:`<svg ${s}><path d="M8 21 L12 3 L16 21 Z" stroke="${color}" stroke-width="1.8" fill="none" stroke-linejoin="round"/><line x1="12" y1="12" x2="16" y2="7" stroke="${color}" stroke-width="1.6"/><circle cx="16" cy="7" r="1.6" fill="${color}"/></svg>`,
+    diamond:`<svg ${s}><path d="M12 3 L20 10 L12 21 L4 10 Z" fill="${color}"/></svg>`,
+    rank:`<svg ${s}><path d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 17.5 L6 21 L7 14 L2 9 L9 8 Z" stroke="${color}" stroke-width="1.8" fill="none"/></svg>`,
+    calendar:`<svg ${s}><rect x="4" y="6" width="16" height="14" rx="2" stroke="${color}" stroke-width="1.8" fill="none"/><rect x="4" y="6" width="16" height="4" fill="${color}"/><rect x="8" y="3" width="1.8" height="4" fill="${color}"/><rect x="14" y="3" width="1.8" height="4" fill="${color}"/></svg>`,
+    crown:`<svg ${s}><path d="M4 18 L4 8 L8.5 12 L12 5 L15.5 12 L20 8 L20 18 Z" fill="${color}"/></svg>`,
+    hex:`<svg ${s}><path d="M12 2 L20 7 V17 L12 22 L4 17 V7 Z" stroke="${color}" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="2.4" fill="${color}"/></svg>`,
+    wave:`<svg ${s}><path d="M3 12 Q6 5 9 12 T15 12 T21 12" stroke="${color}" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`,
+    target:`<svg ${s}><circle cx="12" cy="12" r="8" stroke="${color}" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="3.6" stroke="${color}" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1" fill="${color}"/></svg>`,
+    keys:`<svg ${s}><rect x="4" y="6" width="16" height="12" rx="1.5" stroke="${color}" stroke-width="1.8" fill="none"/><rect x="8" y="6" width="1.6" height="7" fill="${color}"/><rect x="12" y="6" width="1.6" height="7" fill="${color}"/><rect x="16" y="6" width="1.6" height="7" fill="${color}"/></svg>`,
+  };
+  return M[name]||M.star;
+}
+
+const RT_ACHS=[
+  {id:'first',ico:'wave',t:'First Beat',d:'Complete your first run',chk:s=>s.stats.runs>=1},
+  {id:'combo10',ico:'flame',t:'On Fire',d:'Hit a 10 combo',chk:s=>s.stats.maxCombo>=10},
+  {id:'combo25',ico:'bolt',t:'Locked In',d:'Hit a 25 combo',chk:s=>s.stats.maxCombo>=25},
+  {id:'combo50',ico:'star',t:'In The Pocket',d:'Hit a 50 combo',chk:s=>s.stats.maxCombo>=50},
+  {id:'combo100',ico:'hex',t:'The Grid Bends',d:'Hit a 100 combo',chk:s=>s.stats.maxCombo>=100},
+  {id:'perfect',ico:'diamond',t:'Flawless',d:'Finish a run with no misses',chk:s=>s.stats.perfectRuns>=1},
+  {id:'ch2',ico:'target',t:'The Drop',d:'Clear Chapter 1',chk:s=>(s.chapters.ch1&&s.chapters.ch1.stars>=1)},
+  {id:'ch3',ico:'target',t:'Drum Machine',d:'Clear Chapter 2',chk:s=>(s.chapters.ch2&&s.chapters.ch2.stars>=1)},
+  {id:'ch4',ico:'target',t:'The Pulse',d:'Clear Chapter 3',chk:s=>(s.chapters.ch3&&s.chapters.ch3.stars>=1)},
+  {id:'ch5',ico:'target',t:'The Void',d:'Clear Chapter 4',chk:s=>(s.chapters.ch4&&s.chapters.ch4.stars>=1)},
+  {id:'ch6',ico:'crown',t:'The Conductor',d:'Clear Chapter 5',chk:s=>(s.chapters.ch5&&s.chapters.ch5.stars>=1)},
+  {id:'lv10',ico:'rank',t:'Drummer',d:'Reach Level 10',chk:s=>s.level>=10},
+  {id:'lv24',ico:'rank',t:'Engineer',d:'Reach Level 24',chk:s=>s.level>=24},
+  {id:'lv46',ico:'crown',t:'Master',d:'Reach Level 46',chk:s=>s.level>=46},
+  {id:'streak3',ico:'calendar',t:'Habit Forming',d:'3-day play streak',chk:s=>s.streak>=3},
+  {id:'streak7',ico:'calendar',t:'Weekly Ritual',d:'7-day play streak',chk:s=>s.streak>=7},
+  {id:'daily',ico:'target',t:'Daily Grind',d:'Complete a daily challenge',chk:s=>s.daily.streak>=1},
+  {id:'threestar',ico:'star',t:'Perfect Score',d:'Earn 3 stars on any chapter',chk:s=>Object.values(s.chapters).some(c=>c.stars>=3)},
+  {id:'legend',ico:'hex',t:'Legend',d:'Reach Level 60',chk:s=>s.level>=60},
+];
+function rtCheckAch(){
+  const newly=[];
+  RT_ACHS.forEach(a=>{ if(!RS.ach[a.id] && a.chk(RS)){ RS.ach[a.id]=Date.now(); newly.push(a); } });
+  if(newly.length){ rtPersist(); newly.forEach((a,i)=>setTimeout(()=>rtToast(a.ico,'Achievement',a.t),400+i*1600)); }
+}
+function rtToast(icoName,label,txt){
+  let el=document.getElementById('rt-toast');
+  if(!el){
+    el=document.createElement('div'); el.id='rt-toast'; el.className='rt-toast';
+    el.innerHTML='<div class="ic" id="rt-toast-ic"></div><div><div class="tt" id="rt-toast-tt"></div><div class="td" id="rt-toast-txt"></div></div>';
+    document.body.appendChild(el);
+  }
+  document.getElementById('rt-toast-ic').innerHTML=rtIco(icoName,'#FF8500',26);
+  document.getElementById('rt-toast-tt').textContent=label;
+  document.getElementById('rt-toast-txt').textContent=txt;
+  el.classList.add('show'); try{buzz([20,40,20]);}catch(e){}
+  setTimeout(()=>el.classList.remove('show'),2600);
+}
+
+// Daily
+function rtToday(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+function rtIsYesterday(dstr){ const y=new Date(); y.setDate(y.getDate()-1); return dstr===(y.getFullYear()+'-'+(y.getMonth()+1)+'-'+y.getDate()); }
+function rtSeed(str){ let h=0; for(let i=0;i<str.length;i++){h=(h*31+str.charCodeAt(i))|0;} return Math.abs(h); }
+function rtDailyChapter(){ return (rtSeed(rtToday())%6)+1; }
+
+// Called from endGame — feeds run results into progression
+function rtRecordRun(chapterId, score, pct, maxCombo, perfect, totalNotes, perfectHits){
+  RS.stats.runs++; RS.stats.totalNotes+=totalNotes; RS.stats.totalPerfect+=perfectHits;
+  RS.stats.maxCombo=Math.max(RS.stats.maxCombo,maxCombo);
+  if(perfect) RS.stats.perfectRuns++;
+  // stars: accuracy-based
+  let stars=0; if(pct>=60)stars=1; if(pct>=80)stars=2; if(pct>=95)stars=3;
+  const key='ch'+chapterId;
+  const rec=RS.chapters[key]||{best:0,stars:0,plays:0};
+  rec.plays++; rec.best=Math.max(rec.best,score); rec.stars=Math.max(rec.stars,stars);
+  RS.chapters[key]=rec;
+  // XP: score-scaled + combo bonus, double on daily
+  const isDaily=(G.isDailyRun===true);
+  let xp=Math.round(score/12)+maxCombo*2;
+  if(isDaily) xp*=2;
+  if(isDaily && !RS.daily.done && RS.daily.date===rtToday()){ RS.daily.done=true; RS.daily.streak=(RS.daily.streak||0)+1; }
+  // play streak
+  const t=rtToday();
+  if(RS.lastPlayed!==t){ if(RS.lastPlayed && rtIsYesterday(RS.lastPlayed)) RS.streak++; else RS.streak=1; RS.lastPlayed=t; }
+  const lev=rtAddXP(xp);
+  rtCheckAch(); rtPersist();
+  return {stars, xp, leveled:lev.leveled, newLevel:lev.to, isDaily};
+}
+
+// Name
+function rtPlayerName(){ return RS.name||'INITIATE'; }
+function rtOpenName(){
+  let m=document.getElementById('rt-name-modal');
+  if(!m){
+    m=document.createElement('div'); m.id='rt-name-modal'; m.className='rt-modal-bg';
+    m.innerHTML=`<div class="rt-modal"><h2>Your Name</h2><div class="subh">Stamped on your runs</div>
+      <input class="rt-name-input" id="rt-name-field" maxlength="14" placeholder="INITIATE" autocomplete="off">
+      <div class="rt-name-hint">Up to 14 characters</div>
+      <button class="rt-modal-btn" id="rt-name-save">Save</button></div>`;
+    document.body.appendChild(m);
+    document.getElementById('rt-name-save').onclick=()=>{
+      const v=document.getElementById('rt-name-field').value.trim().toUpperCase().slice(0,14);
+      RS.name=v; rtPersist(); rtRefreshProfile(); m.classList.remove('on');
+    };
+    m.onclick=e=>{ if(e.target===m) m.classList.remove('on'); };
+  }
+  document.getElementById('rt-name-field').value=RS.name;
+  m.classList.add('on'); setTimeout(()=>document.getElementById('rt-name-field').focus(),100);
+}
+
+// Achievements modal
+function rtOpenAch(){
+  let m=document.getElementById('rt-ach-modal');
+  if(!m){ m=document.createElement('div'); m.id='rt-ach-modal'; m.className='rt-modal-bg';
+    m.innerHTML='<div class="rt-modal"><h2>Achievements</h2><div class="subh" id="rt-ach-count"></div><div id="rt-ach-list"></div><button class="rt-modal-btn ghost" id="rt-ach-close">Close</button></div>';
+    document.body.appendChild(m);
+    document.getElementById('rt-ach-close').onclick=()=>m.classList.remove('on');
+    m.onclick=e=>{ if(e.target===m) m.classList.remove('on'); };
+  }
+  const unlocked=Object.keys(RS.ach).length;
+  document.getElementById('rt-ach-count').textContent=unlocked+' / '+RT_ACHS.length+' unlocked';
+  const list=document.getElementById('rt-ach-list'); list.innerHTML='';
+  RT_ACHS.forEach(a=>{
+    const has=!!RS.ach[a.id];
+    const d=document.createElement('div'); d.className='rt-ach'+(has?'':' locked');
+    d.innerHTML=`<div class="ic">${rtIco(a.ico,has?'#4AA68D':'#5b7268',28)}</div><div class="info"><div class="t">${a.t}</div><div class="d">${a.d}</div></div>${has?'<div class="chk">'+rtIco('check','#4AA68D',18)+'</div>':''}`;
+    list.appendChild(d);
+  });
+  m.classList.add('on');
+}
+
+function rtShowStars(stars){
+  const host=document.getElementById('rt-res-stars'); if(!host)return;
+  host.innerHTML='';
+  for(let i=0;i<3;i++){ const d=document.createElement('div'); d.className='rt-star'; d.innerHTML=rtIco('star','#FF8500',34); host.appendChild(d); }
+  const els=host.querySelectorAll('.rt-star');
+  els.forEach((s,i)=>{ if(i<stars) setTimeout(()=>{ s.classList.add('lit'); try{buzz(15);}catch(e){} }, 400+i*240); });
+}
+function rtShowXP(xp,isDaily){
+  const host=document.getElementById('rt-res-xp'); if(!host)return;
+  const need=rtXpForLevel(RS.level);
+  host.innerHTML=`<div class="lbl"><span>Level ${RS.level}</span><span>+${xp} XP${isDaily?' (2×)':''}</span></div><div class="bar"><i></i></div>`;
+  setTimeout(()=>{ const b=host.querySelector('i'); if(b) b.style.width=Math.min(100,RS.xp/need*100)+'%'; },300);
+}
+// Profile bar on the title screen
+function rtRefreshProfile(){
+  const host=document.getElementById('rt-profile'); if(!host)return;
+  const r=rtRankFor(RS.level); const need=rtXpForLevel(RS.level);
+  const dc=rtDailyChapter();
+  const chName=(typeof CH!=='undefined'&&CH[dc])?CH[dc].name:'Chapter '+dc;
+  // reset daily if new day
+  const t=rtToday();
+  if(RS.daily.date!==t){ RS.daily={date:t,done:false,streak:(RS.daily.done?RS.daily.streak:0)}; rtPersist(); }
+  host.innerHTML=`
+    <div class="rt-name" id="rt-name-btn"><span>${rtPlayerName()}</span>${rtIco('keys','#6f8a7d',13)}</div>
+    <div class="rt-rankbadge" style="--rc:${r.c}">${r.name}</div>
+    <div class="rt-xpwrap"><div class="bar"><i style="width:${Math.min(100,RS.xp/need*100)}%"></i></div>
+      <div class="lbl"><span>LV ${RS.level}</span><span>${RS.xp} / ${need} XP</span></div></div>
+    <div class="rt-profstats">
+      <div class="cell"><div class="v">${RS.level}</div><div class="l">Level</div></div>
+      <div class="cell"><div class="v">${RS.streak}</div><div class="l">Streak</div></div>
+      <div class="cell"><div class="v">${RS.lifetimeXP.toLocaleString()}</div><div class="l">Lifetime XP</div></div>
+    </div>
+    <div class="rt-daily" id="rt-daily-btn">
+      <div class="dh"><span class="t">Daily Challenge</span><span class="fl">${rtIco('flame','#FF8500',12)}${RS.daily.streak>0?' '+RS.daily.streak:''}</span></div>
+      <div class="dd">${chName}</div>
+      <div class="ds">${RS.daily.done?'Completed · come back tomorrow':'Play Chapter '+dc+' · double XP'}</div>
+    </div>
+    <div class="rt-prof-btns">
+      <div class="rt-prof-btn" id="rt-ach-btn">${rtIco('trophy','#cfe',15)} Achievements</div>
+    </div>`;
+  document.getElementById('rt-name-btn').onclick=rtOpenName;
+  document.getElementById('rt-ach-btn').onclick=rtOpenAch;
+  const db=document.getElementById('rt-daily-btn');
+  db.classList.toggle('done',RS.daily.done);
+  db.onclick=()=>{ if(RS.daily.done)return; G.chapter=dc; G.selCh=dc; G.isDailyRun=true; if(typeof showTut==='function'&&typeof CH!=='undefined'){A&&A();showTut(CH[dc]);} };
+}
+
+
+
 const isMobile=window.innerWidth<600;
 // Real touch-capable-device check, separate from isMobile (which is a *layout*
 // breakpoint, not a device check — a resized desktop window under 600px would
@@ -722,7 +1017,7 @@ function noteGlyph(symType,color,size){
 const G={bpm:80,chapter:1,selCh:1,score:0,misses:0,combo:0,maxCombo:0,lastMult:1,
   hits:{perfect:0,good:0,close:0,miss:0},offsets:[],totalNotes:0,
   active:false,raf:null,metro:null,handlers:[],audioStart:0,
-  paused:false,pauseAt:0,curChapter:null,calibrationMs:0,hypeBars:[]};
+  paused:false,pauseAt:0,curChapter:null,calibrationMs:0,hypeBars:[],isDailyRun:false};
 // ═══════════════ SHARED CONSISTENCY HELPERS ═══════════════
 // ONE speed for every scrolling/falling chapter, so the game FEELS like one game.
 // Chapters with long bars (Ch1) use a fixed fraction of this, never their own formula.
@@ -891,7 +1186,7 @@ function updCalib(){
 })();
 
 // ═══════════════ NAV ═══════════════
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='title-screen'&&typeof rtRefreshProfile==='function')rtRefreshProfile();}
 
 // Build chapter cards
 (function(){
@@ -938,8 +1233,14 @@ populateBuildingWindows('buildings-title');
 // Title character
 document.getElementById('title-char-slot').innerHTML='<div style="margin-bottom:28px">'+charSVG('tc',1.1)+'</div>';
 setInterval(()=>blinkEyes('tc'),2800+Math.random()*2200);
+document.getElementById('pause-btn').innerHTML=rtIco('pause','#7a9a88',15);
+document.getElementById('play-btn-ico').innerHTML=rtIco('play','#180800',18);
+onTap(document.getElementById('open-play-btn'),()=>{A();document.getElementById('rt-play-modal').classList.add('on');});
+onTap(document.getElementById('rt-play-close'),()=>document.getElementById('rt-play-modal').classList.remove('on'));
+document.getElementById('rt-play-modal').addEventListener('click',e=>{if(e.target.id==='rt-play-modal')document.getElementById('rt-play-modal').classList.remove('on');});
+rtRefreshProfile();
 
-onTap(document.getElementById('start-btn'),()=>{A();G.chapter=G.selCh;showTut(CH[G.chapter]);});
+onTap(document.getElementById('start-btn'),()=>{A();document.getElementById('rt-play-modal').classList.remove('on');G.chapter=G.selCh;showTut(CH[G.chapter]);});
 onTap(document.getElementById('tut-back'),()=>show('title-screen'));
 onTap(document.getElementById('tut-play'),()=>{A();startGame();});
 onTap(document.getElementById('res-retry'),()=>{A();startGame();});
@@ -1872,7 +2173,9 @@ function gameFloat(ch){
     const durMs=n.beats*BMS;
     const barW=Math.max(70,(durMs/1000)*SPEED); // width = duration, min 70px so short notes stay tappable
     notes.push({key,n,durMs,barW,startTime:t,endTime:t+durMs,spawned:false,done:false,el:null,pressed:false,pressT:0});
-    t+=durMs; // next note begins exactly when this one ends (legato stream)
+    // Beat-space: leave a rest between notes so it isn't a legato back-to-back
+    // press-fest — the player gets a beat to reset before the next note lands.
+    t+=durMs+BMS; // note duration + one full beat of breathing room
   });
   G.totalNotes=notes.length;
 
@@ -2536,19 +2839,19 @@ function gameConductor(ch){
 
   // Full-height column touch zones — a thumb anywhere in the column counts.
   const laneHeld=[null,null,null,null];
+  const laneFns=[]; // capture press/release per lane for keyboard (A S D F on desktop)
   for(let i=0;i<COLS;i++){
     const zone=document.createElement('div');
     zone.style.cssText=`position:absolute;left:${PLAY_X0+i*colW}px;top:0;width:${colW}px;height:100%;z-index:12;`;
     stage.appendChild(zone);
     const laneIdx=i;
-    addHold(zone,
-      ()=>{ // PRESS
+    const pressFn=()=>{ // PRESS
         if(!G.active||G.paused)return;
         const now=gameNow();
         pads[laneIdx].classList.add('lit');
         let bestH=null,bestHD=Infinity;
         timeline.forEach(nt=>{if(nt.done||!nt.hold||!nt.spawned||nt.lane!==laneIdx)return;const d=now-nt.time;if(Math.abs(d)<Math.abs(bestHD)){bestHD=d;bestH=nt;}});
-        if(bestH&&Math.abs(bestHD)<260){
+        if(bestH&&Math.abs(bestHD)<320){
           bestH.pressed=true;bestH.pressT=now;laneHeld[laneIdx]=bestH;
           if(bestH.el){bestH.el.style.borderColor='#4AA68D';bestH.el.style.boxShadow='0 0 28px rgba(74,166,141,.8)';}
           startDrone();
@@ -2556,14 +2859,14 @@ function gameConductor(ch){
         }
         let best=null,bestD=Infinity;
         timeline.forEach(nt=>{if(nt.done||!nt.tap||!nt.spawned||nt.lane!==laneIdx)return;const d=now-nt.time;if(Math.abs(d)<Math.abs(bestD)){bestD=d;best=nt;}});
-        if(best&&Math.abs(bestD)<260){
+        if(best&&Math.abs(bestD)<320){
           best.done=true;
           if(best.el){const nl=best.el;nl.classList.add('hit');nl.style.transition='opacity .18s';nl.style.opacity='0';setTimeout(()=>nl.remove(),200);}
           bounceChar();
           registerHit(bestD);
         } else { whiffTick(); }
-      },
-      ()=>{ // RELEASE
+      };
+    const releaseFn=()=>{ // RELEASE
         pads[laneIdx].classList.remove('lit');
         if(!G.active||G.paused)return;
         const nt=laneHeld[laneIdx];laneHeld[laneIdx]=null;
@@ -2575,14 +2878,59 @@ function gameConductor(ch){
         nt.done=true;
         if(nt.el){nt.el.style.transition='opacity .15s';nt.el.style.opacity='0';}
         registerHold(pressOffset,held,nt.durMs);
-      }
-    );
+      };
+    laneFns[laneIdx]={press:pressFn,release:releaseFn};
+    addHold(zone, pressFn, releaseFn);
+  }
+
+  // ── Desktop keyboard: A S D F map to the 4 columns (student request) ──
+  // Touch/thumbs still work everywhere; this just adds keys so desktop players
+  // don't have to mouse between 4 columns. keydown=press, keyup=release.
+  const KEYMAP={a:0,s:1,d:2,f:3};
+  const CODEMAP={KeyA:0,KeyS:1,KeyD:2,KeyF:3};
+  const keyDown={};
+  function laneFromEvent(e){
+    if(e.code && e.code in CODEMAP) return CODEMAP[e.code];
+    const k=(e.key||'').toLowerCase();
+    if(k in KEYMAP) return KEYMAP[k];
+    return -1;
+  }
+  const onKeyDown=e=>{
+    if(!G.active||G.paused)return;
+    const lane=laneFromEvent(e);
+    if(lane<0)return;
+    e.preventDefault();
+    const idk=e.code||e.key;
+    if(keyDown[idk])return; // ignore OS auto-repeat
+    keyDown[idk]=true;
+    if(laneFns[lane])laneFns[lane].press();
+  };
+  const onKeyUp=e=>{
+    const lane=laneFromEvent(e);
+    if(lane<0)return;
+    const idk=e.code||e.key;
+    keyDown[idk]=false;
+    if(laneFns[lane])laneFns[lane].release();
+  };
+  window.addEventListener('keydown',onKeyDown);
+  window.addEventListener('keyup',onKeyUp);
+  G.handlers.push(()=>{window.removeEventListener('keydown',onKeyDown);window.removeEventListener('keyup',onKeyUp);});
+  // On-screen key hints on the pads (desktop only — hidden on touch devices)
+  if(!isTouchDevice){
+    const KEYS=['A','S','D','F'];
+    for(let i=0;i<COLS;i++){
+      const hint=document.createElement('div');
+      hint.textContent=KEYS[i];
+      hint.style.cssText=`position:absolute;left:${PLAY_X0+i*colW+(colW-NOTE_W)/2-6}px;top:${HIT_Y+PAD_H-2}px;width:${NOTE_W+12}px;text-align:center;font-family:var(--font-m);font-size:12px;font-weight:700;letter-spacing:.1em;color:${colColors[i]};opacity:.6;z-index:6;pointer-events:none;`;
+      stage.appendChild(hint);
+    }
   }
 
   let ended=false;
   function finish(){if(ended)return;ended=true;stopGame();setTimeout(endGame,600);}
   countIn(()=>{
     G.active=true;startMetro();updateAura();
+    if(!isTouchDevice)setTimeout(()=>showBanner('Use A S D F keys'),500);
     function loop(){
       if(!G.active)return;
       if(G.paused){G.raf=requestAnimationFrame(loop);return;}
@@ -2773,6 +3121,14 @@ function endGame(){
 
   // Coaching CTA — rotates message, always points to the same booking link
   document.getElementById('res-cta-msg').textContent=ctaMessage(pct);
+
+  // ── Hive Mind progression: record run, award XP, stars, achievements ──
+  const perfectRun=(G.misses===0 && G.totalNotes>0);
+  const prog=rtRecordRun(G.chapter, G.score, pct, G.maxCombo, perfectRun, G.totalNotes, G.hits.perfect);
+  rtShowStars(prog.stars);
+  rtShowXP(prog.xp, prog.isDaily);
+  if(prog.leveled){ setTimeout(()=>rtToast('rank','Level '+prog.newLevel, rtRankFor(prog.newLevel).name), 1100); }
+  G.isDailyRun=false;
 
   show('result-screen');
   if(pct>=75||rank===0){setTimeout(()=>{celebrationBurst(gc);buzz([20,40,20,40,60]);},250);}
