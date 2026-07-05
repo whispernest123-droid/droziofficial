@@ -98,6 +98,8 @@ h1{font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
 .daily-banner .dstat{font-family:var(--font-m);font-size:9px;color:#93b0a4;margin-top:3px;letter-spacing:.06em;}
 .daily-banner.done{opacity:.6;border-color:rgba(74,166,141,.4);}
 .footer-note{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-family:var(--font-m);font-size:8.5px;letter-spacing:.14em;color:#5b7268;text-transform:uppercase;z-index:11;}
+.arcade-back{position:absolute;top:14px;left:14px;z-index:30;font-family:var(--font-m);font-size:11px;letter-spacing:.16em;color:#8fb3a5;text-decoration:none;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);padding:7px 12px;border-radius:4px;text-transform:uppercase;transition:all .2s;}
+.arcade-back:active{transform:scale(.94);border-color:var(--slime);color:var(--slime);}
 .book-cta{display:flex;align-items:center;gap:12px;width:min(400px,90vw);margin-top:14px;padding:13px 16px;text-decoration:none;
   background:linear-gradient(135deg,rgba(255,133,0,.14),rgba(74,166,141,.06));border:1px solid rgba(255,133,0,.4);border-radius:8px;
   transition:transform .12s,box-shadow .2s;box-shadow:0 0 18px rgba(255,133,0,.12);}
@@ -269,6 +271,7 @@ h1{font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
   <div class="levelup-flash" id="lu-flash"></div>
 
   <div class="screen active" id="title-screen">
+    <a class="arcade-back" href="https://www.droziofficial.com/trials/">‹ Arcade</a>
     <div class="char" id="title-char"></div>
     <h1>Pitch Trials</h1>
     <div class="title-sub">Hive Mind · Ear Training Arcade</div>
@@ -803,7 +806,7 @@ function startTimer(ms){
   },step);
 }
 function clearTimer(){ if(G.timer){ clearInterval(G.timer); G.timer=null; } }
-function timeout(){ if(!G.answering)return; G.answering=false; revealCorrect(); registerWrong(null,'TOO SLOW'); }
+function timeout(){ if(!G.answering)return; G.answering=false; revealCorrect(); registerWrong(null,'TOO SLOW'); if(G.lives>0){ setTimeout(nextRound, 1050); } }
 
 function answer(label, correct, el){
   if(!G.answering||G.paused)return;
@@ -877,6 +880,7 @@ function pauseRetry(){ sfx('ui'); G.paused=false; document.getElementById('pause
 function pauseMenu(){ sfx('ui'); G.paused=false; G.active=false; clearTimer(); document.getElementById('pause-overlay').classList.remove('on'); show('title-screen'); refreshTitle(); }
 
 function endRun(){
+  if(!G.active)return;
   clearTimer(); G.active=false;
   const acc=G.answered? Math.round(G.correct/G.answered*100):0;
   const avgT=G.times.length? (G.times.reduce((a,b)=>a+b,0)/G.times.length):0;
