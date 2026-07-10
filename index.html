@@ -70,6 +70,13 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 body.cursor-hover #vf{width:60px;height:60px}
 body.cursor-hover #vf .bulb{background:radial-gradient(circle,rgba(255,200,140,.95),rgba(255,133,0,.4) 50%,transparent 72%);box-shadow:0 0 30px 10px rgba(255,133,0,.45)}
 
+/* over an iframe (Spotify embeds etc): custom cursor can't track mouse position
+   inside cross-origin iframes, so it freezes in place. Hide it and the darkness
+   overlay, restore the real system cursor, instead of leaving a stuck glowing orb. */
+body.over-iframe{cursor:auto}
+body.over-iframe #vf,body.over-iframe #torch,body.over-iframe #dark{opacity:0;transition:opacity .15s}
+.rel-embed{cursor:auto}
+
 /* FOG / LIGHTNING */
 #fog-canvas{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.9}
 #lightning-flash{position:fixed;inset:0;pointer-events:none;z-index:10;background:#cfe8de;opacity:0;mix-blend-mode:screen;transition:opacity .07s}
@@ -117,7 +124,7 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:linear-gr
 @keyframes descend{0%{transform:scaleY(0);transform-origin:top}55%{transform:scaleY(1);transform-origin:top}56%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
 /* BUTTONS */
-.btn{display:inline-block;position:relative;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;letter-spacing:.22em;text-transform:uppercase;padding:16px 38px;cursor:none;transition:filter .2s,background .2s,color .2s,transform .08s;will-change:transform;clip-path:polygon(0 0,100% 4%,98% 100%,3% 96%);border:1.5px solid currentColor;overflow:hidden;image-rendering:pixelated;isolation:isolate}
+.btn{display:inline-block;position:relative;text-decoration:none;font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;letter-spacing:.22em;text-transform:uppercase;padding:16px 38px;cursor:none;transition:filter .2s,background .2s,color .2s,transform .08s;will-change:transform;clip-path:polygon(0 0,92% 0,100% 24%,100% 100%,8% 100%,0 76%);border:1.5px solid currentColor;overflow:hidden;image-rendering:pixelated;isolation:isolate}
 /* distressed scratch/grain texture baked onto every button */
 .btn::before{content:'';position:absolute;inset:0;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 60'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65 0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)' opacity='0.45'/%3E%3C/svg%3E");mix-blend-mode:overlay;opacity:.5;pointer-events:none}
 /* uneven hand-scratched underline streak */
@@ -157,9 +164,9 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:linear-gr
 .rel-embed{position:relative;background:#060d09;border:1px solid #18402D44;overflow:hidden}
 .featured-embed{min-height:420px}
 .featured-embed iframe{position:absolute;inset:0;width:100%;height:100%}
-.rel-embeds-col{display:grid;grid-template-rows:1fr 1fr;gap:16px}
-.rel-embeds-col .rel-embed{min-height:202px}
-.rel-embeds-col iframe{position:absolute;inset:0;width:100%;height:100%}
+.rel-embeds-col{display:grid;grid-template-rows:auto auto;gap:16px;align-content:start}
+.rel-embeds-col .rel-embed{min-height:0}
+.rel-embeds-col iframe{position:relative;display:block;width:100%;height:152px}
 .rel-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 @media(max-width:900px){.rel-grid{grid-template-columns:1fr}.featured-embed{min-height:360px}.rel-strip{grid-template-columns:repeat(2,1fr)}}
 
@@ -178,6 +185,8 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:linear-gr
 .merch-card:hover .merch-shine{opacity:1}
 .merch-label{position:absolute;bottom:0;left:0;right:0;padding:18px 20px;background:linear-gradient(to top,rgba(1,3,2,.95),transparent);z-index:4}
 .merch-name{font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--bone)}
+
+/* GAMES */
 .merch-sub{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--slime);margin-top:3px}
 .merch-cta{text-align:center}
 
@@ -374,7 +383,6 @@ footer{background:#000;border-top:1px solid #18402D44;padding:38px 40px;display:
     <div class="reveal">
       <div class="sec-rune"><span>The Catalogue</span></div>
       <h2 class="sec-title">Music</h2>
-      <div class="listeners"><i></i>36,084 <b>monthly listeners</b> · Spotify</div>
     </div>
     <div class="rel-grid reveal">
       <div class="rel-embed featured-embed">
@@ -453,7 +461,7 @@ footer{background:#000;border-top:1px solid #18402D44;padding:38px 40px;display:
         <div class="coach-seal">
           <p class="seal-label">From the YouTube to the Studio</p>
           <p class="seal-body">Subscribe for free tutorials, then graduate into private mentorship when you're ready to go pro.</p>
-          <div style="margin-top:16px"><a href="https://www.youtube.com/channel/UCEWbyKHXZFLkkdsjPUWAacw" target="_blank" rel="noopener" class="btn ghost" data-magnetic>Free Tutorials ↗</a></div>
+          <div style="margin-top:16px;display:flex;gap:14px;flex-wrap:wrap"><a href="https://www.youtube.com/channel/UCEWbyKHXZFLkkdsjPUWAacw" target="_blank" rel="noopener" class="btn ghost" data-magnetic>Free Tutorials ↗</a><a href="https://www.droziofficial.com/trials" class="btn ghost" data-magnetic>Play the Arcade ↗</a></div>
         </div>
       </div>
     </div>
@@ -513,6 +521,20 @@ footer{background:#000;border-top:1px solid #18402D44;padding:38px 40px;display:
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let mx=innerWidth/2,my=innerHeight/2;
 const vf=document.getElementById('vf'),torch=document.getElementById('torch'),dark=document.getElementById('dark');
+
+/* FIX: custom cursor freezes over cross-origin iframes (Spotify embeds) since
+   mousemove stops firing once the real cursor crosses into them. Detect entry
+   two ways — hovering the embed wrapper, and the window losing focus (which
+   happens the instant the mouse settles inside an iframe) — and hide the
+   custom cursor + darkness layer while over it, falling back to the system
+   cursor so nothing looks stuck. */
+document.querySelectorAll('.rel-embed').forEach(embed=>{
+  embed.addEventListener('mouseenter',()=>document.body.classList.add('over-iframe'));
+  embed.addEventListener('mouseleave',()=>document.body.classList.remove('over-iframe'));
+});
+window.addEventListener('blur',()=>document.body.classList.add('over-iframe'));
+window.addEventListener('focus',()=>document.body.classList.remove('over-iframe'));
+
 const ghosts=[...torch.querySelectorAll('.ghost')];
 const streak=torch.querySelector('.flare-streak');
 document.addEventListener('mousemove',e=>{
