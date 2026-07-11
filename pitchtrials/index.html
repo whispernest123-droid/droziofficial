@@ -89,6 +89,15 @@ h1{font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
 .player-name{font-family:var(--font-d);font-weight:600;font-size:20px;letter-spacing:.06em;color:#fff;text-transform:uppercase;
   display:inline-flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:2px;}
 .player-name .edit{opacity:.5;display:flex;}
+.diff-sel{width:min(340px,82vw);margin-bottom:14px;}
+.diff-lbl{font-family:var(--font-m);font-size:9px;letter-spacing:.2em;color:#7c968b;text-transform:uppercase;margin-bottom:7px;text-align:center;}
+.diff-row{display:flex;gap:5px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:4px;}
+.diff-opt{flex:1;text-align:center;padding:9px 4px;font-family:var(--font-d);font-weight:600;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#7c968b;border-radius:4px;cursor:pointer;transition:all .18s;}
+.diff-opt:active{transform:scale(.96);}
+.diff-opt.on{background:linear-gradient(135deg,rgba(74,166,141,.3),rgba(0,229,255,.12));color:#fff;box-shadow:0 0 14px rgba(74,166,141,.3);}
+.diff-ds{font-family:var(--font-m);font-size:9px;color:#93b0a4;text-align:center;margin-top:7px;letter-spacing:.05em;}
+.replay-row{display:flex;gap:8px;justify-content:center;align-items:center;}
+.root-btn{border-color:rgba(255,133,0,.4)!important;color:#c99a5f!important;}
 .daily-banner{width:min(340px,82vw);background:linear-gradient(135deg,rgba(255,133,0,.12),rgba(0,0,0,.2));border:1px solid rgba(255,133,0,.3);border-radius:6px;padding:12px 14px;margin-bottom:14px;cursor:pointer;transition:transform .12s;}
 .daily-banner:active{transform:scale(.97);}
 .daily-banner .dh{display:flex;justify-content:space-between;align-items:center;}
@@ -291,7 +300,16 @@ h1{font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
       <div class="dd" id="daily-name">Loading…</div>
       <div class="dstat" id="daily-stat"></div>
     </div>
-    <div class="menu-btns">
+    <div class="diff-sel" id="diff-sel">
+      <div class="diff-lbl">Difficulty</div>
+      <div class="diff-row">
+        <div class="diff-opt" data-d="beginner" onclick="setDiff('beginner')">Beginner</div>
+        <div class="diff-opt" data-d="intermediate" onclick="setDiff('intermediate')">Intermediate</div>
+        <div class="diff-opt" data-d="experienced" onclick="setDiff('experienced')">Experienced</div>
+      </div>
+      <div class="diff-ds" id="diff-ds"></div>
+    </div>
+    <div class="mini-row">
       <button class="btn fire" onclick="goModes()" style="display:flex;align-items:center;justify-content:center;gap:9px"><span id="play-btn-ico" style="display:flex"></span> Play</button>
     </div>
     <div class="mini-row">
@@ -328,7 +346,10 @@ h1{font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
         <div class="pulse-ring" id="pulse-ring"></div>
         <div id="game-char"></div>
       </div>
-      <div class="replay" onclick="replayNote()"><span id="replay-ico"></span> Replay</div>
+      <div class="replay-row">
+        <div class="replay" onclick="replayNote()"><span id="replay-ico"></span> Replay</div>
+        <div class="replay root-btn" id="root-btn" onclick="playRootNote()"><span id="root-ico"></span> Root (C)</div>
+      </div>
       <div class="answers cols-4" id="answers"></div>
       <div class="fb" id="fb"></div>
     </div>
@@ -471,6 +492,7 @@ function buzz(p){ if(navigator.vibrate) try{navigator.vibrate(p);}catch(e){} }
 const SAVE_KEY='drozi_pitch_trials_v2';
 const DEFAULT_SAVE={
   name:'', xp:0, lifetimeXP:0, level:1, streak:0, lastPlayed:null,
+  difficulty:'beginner',
   daily:{date:null, done:false, streak:0},
   modes:{}, ach:{},
   stats:{totalCorrect:0, totalAnswered:0, perfectRuns:0, maxCombo:0}
@@ -516,20 +538,41 @@ const OCT=4;
 const NAT=['C','D','E','F','G','A','B'];
 const CHROM=NOTE_NAMES;
 function buildNotePool(names, octaves){ const p=[]; names.forEach(n=>octaves.forEach(o=>p.push({name:n,octave:o}))); return p; }
+const DIFFS={
+  beginner:{ name:'Beginner', ds:'Scale chime + root note · 3× time', chime:true, root:true, timeMult:3, xpMult:0.6 },
+  intermediate:{ name:'Intermediate', ds:'Root note only · normal time', chime:false, root:true, timeMult:1.5, xpMult:0.85 },
+  experienced:{ name:'Experienced', ds:'No reference · pure recall', chime:false, root:false, timeMult:1, xpMult:1 },
+};
+function curDiff(){ return DIFFS[S.difficulty] || DIFFS.beginner; }
+// Reference root — everything is measured against C in the working octave.
+const ROOT_NAME='C';
+function rootMidi(){ return noteMidi(ROOT_NAME, OCT); }
+// Ascending C major scale, played as a quick chime so the ear has a frame.
+function playScaleChime(cb){
+  const scale=[0,2,4,5,7,9,11,12];
+  const base=rootMidi();
+  scale.forEach((s,i)=>{ setTimeout(()=>playNote(base+s,'bell',.42,.13), i*135); });
+  if(cb) setTimeout(cb, scale.length*135 + 260);
+}
+function playRootNote(){
+  if(G.paused) return;
+  sfx('tick');
+  playNote(rootMidi(),'bell',1.1,.22);
+}
 const MODES={
   hunter1:{ name:'Pitch Hunter', ico:'target', tier:'Naturals', ds:'7 natural notes · single octave', unlockLv:1, type:'note',
     pool:()=>buildNotePool(NAT,[OCT]), opts:NAT, cols:4, timbres:['piano'], time:6000, rounds:15 },
-  hunter2:{ name:'Sharps & Flats', ico:'sharp', tier:'Chromatic', ds:'All 12 chromatic notes', unlockLv:4, type:'note',
+  hunter2:{ name:'Sharps & Flats', ico:'sharp', tier:'Chromatic · Final Trial', ds:'All 12 chromatic notes', unlockLv:22, type:'note',
     pool:()=>buildNotePool(CHROM,[OCT]), opts:CHROM, cols:4, timbres:['piano'], time:6500, rounds:15 },
-  octaves:{ name:'Octave Hunter', ico:'stack', tier:'Octaves', ds:'Naturals across 3 octaves', unlockLv:8, type:'note',
+  octaves:{ name:'Octave Hunter', ico:'stack', tier:'Octaves', ds:'Naturals across 3 octaves', unlockLv:4, type:'note',
     pool:()=>buildNotePool(NAT,[3,4,5]), opts:NAT, cols:4, timbres:['piano'], time:5500, rounds:15, octaveBlind:true },
-  timbres:{ name:'Timbre Trials', ico:'keys', tier:'Instruments', ds:'Notes shift instrument each round', unlockLv:12, type:'note',
+  timbres:{ name:'Timbre Trials', ico:'keys', tier:'Instruments', ds:'Notes shift instrument each round', unlockLv:16, type:'note',
     pool:()=>buildNotePool(NAT,[OCT]), opts:NAT, cols:4, timbres:['piano','synth','bell','organ','pluck'], time:5500, rounds:15 },
-  detuned:{ name:'Detuned Ear', ico:'wave', tier:'Micro-tuning', ds:'In tune, or a few cents off?', unlockLv:16, type:'tune',
+  detuned:{ name:'Detuned Ear', ico:'wave', tier:'Micro-tuning · Master', ds:'In tune, or a few cents off?', unlockLv:28, type:'tune',
     time:5000, rounds:15 },
-  reflex:{ name:'Reflex Trials', ico:'bolt', tier:'Speed', ds:'Chromatic · 2.8s reaction window', unlockLv:22, type:'note',
-    pool:()=>buildNotePool(CHROM,[OCT]), opts:CHROM, cols:4, timbres:['piano','synth'], time:2800, rounds:20 },
-  interval:{ name:'Interval Hunter', ico:'ruler', tier:'Bonus · Intervals', ds:'Two notes — name the distance', unlockLv:6, type:'interval',
+  reflex:{ name:'Reflex Trials', ico:'bolt', tier:'Speed', ds:'Naturals · 2.8s reaction window', unlockLv:12, type:'note',
+    pool:()=>buildNotePool(NAT,[OCT]), opts:NAT, cols:4, timbres:['piano','synth'], time:2800, rounds:20 },
+  interval:{ name:'Interval Hunter', ico:'ruler', tier:'Intervals', ds:'Two notes — name the distance', unlockLv:8, type:'interval',
     time:7000, rounds:15 },
 };
 const INTERVALS=[
@@ -649,6 +692,18 @@ function saveName(){
   S.name=v; persist(); refreshName(); closeModal('name-modal');
 }
 
+function setDiff(d){
+  if(!DIFFS[d])return;
+  sfx('ui');
+  S.difficulty=d; persist();
+  renderDiff();
+}
+function renderDiff(){
+  document.querySelectorAll('.diff-opt').forEach(o=>{
+    o.classList.toggle('on', o.dataset.d===S.difficulty);
+  });
+  document.getElementById('diff-ds').textContent=curDiff().ds;
+}
 function refreshTitle(){
   const r=rankFor(S.level);
   document.getElementById('title-char').innerHTML=charSVG('title-char-svg',1.5);
@@ -663,13 +718,21 @@ function refreshTitle(){
   document.getElementById('ach-btn-ico').innerHTML=ico('trophy','#fff',15);
   document.getElementById('play-btn-ico').innerHTML=ico('play','#180800',17);
   document.getElementById('book-link-ico').innerHTML=ico('mentor','#c99a5f',14);
+  const ri=document.getElementById('root-ico'); if(ri) ri.innerHTML=ico('target','#c99a5f',13);
+  renderDiff();
   refreshName();
   renderDaily();
 }
 
 function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
 function seedFromStr(str){ let h=0; for(let i=0;i<str.length;i++){h=(h*31+str.charCodeAt(i))|0;} return Math.abs(h); }
-function dailyMode(){ const pool=['hunter1','hunter2','octaves','timbres','interval']; return pool[seedFromStr(todayStr())%pool.length]; }
+function dailyMode(){
+  // Only offer modes the player has actually unlocked — otherwise a level-1
+  // player gets handed the chromatic boss as their daily.
+  const pool=Object.keys(MODES).filter(id=>S.level>=MODES[id].unlockLv);
+  if(!pool.length) return 'hunter1';
+  return pool[seedFromStr(todayStr())%pool.length];
+}
 function isYesterday(dstr){ const y=new Date(); y.setDate(y.getDate()-1); return dstr===(y.getFullYear()+'-'+(y.getMonth()+1)+'-'+y.getDate()); }
 function renderDaily(){
   const t=todayStr();
@@ -684,7 +747,7 @@ function startDaily(){ if(S.daily.done){ sfx('ui'); return; } sfx('ui'); startMo
 
 function renderModes(){
   const list=document.getElementById('modelist'); list.innerHTML='';
-  Object.keys(MODES).forEach(mid=>{
+  Object.keys(MODES).sort((a,b)=>MODES[a].unlockLv-MODES[b].unlockLv).forEach(mid=>{
     const m=MODES[mid]; const unlocked=S.level>=m.unlockLv;
     const md=S.modes[mid]||{}; const best=md.best||0; const stars=md.stars||0;
     const card=document.createElement('div');
@@ -746,11 +809,33 @@ function nextRound(){
   if(G.round>=G.totalRounds || G.lives<=0){ return endRun(); }
   G.round++; G.answering=true;
   const m=MODES[G.mode];
+  const d=curDiff();
   document.getElementById('fb').classList.remove('pop');
   if(m.type==='note') buildNoteRound(m);
   else if(m.type==='tune') buildTuneRound(m);
   else if(m.type==='interval') buildIntervalRound(m);
-  setTimeout(()=>{ if(G.paused)return; playCurrent(); startTimer(m.time); G.roundStart=performance.now(); }, 260);
+  // Root button only helps on pitched modes — detuning has no root reference.
+  const rootBtn=document.getElementById('root-btn');
+  const showRoot = d.root && m.type!=='tune';
+  rootBtn.style.display = showRoot ? 'inline-flex' : 'none';
+  const go=()=>{
+    if(G.paused)return;
+    playCurrent();
+    startTimer(Math.round(m.time * d.timeMult));
+    G.roundStart=performance.now();
+  };
+  // Beginner hears the scale first, so the target note lands in context.
+  if(d.chime && m.type!=='tune'){
+    document.getElementById('qprompt').textContent='Listen to the scale...';
+    playScaleChime(()=>{
+      if(G.paused)return;
+      if(m.type==='note') document.getElementById('qprompt').textContent = m.octaveBlind? 'Which note? (any octave)' : 'Which note?';
+      else document.getElementById('qprompt').textContent='What interval?';
+      setTimeout(go, 200);
+    });
+  } else {
+    setTimeout(go, 260);
+  }
 }
 function buildNoteRound(m){
   const pool=m.pool(); const pick=pool[Math.floor(Math.random()*pool.length)];
@@ -817,7 +902,7 @@ function answer(label, correct, el){
     G.correct++; el.classList.add('correct');
     G.combo++; G.curStreak++; G.maxCombo=Math.max(G.maxCombo,G.combo); G.bestStreakThisRun=Math.max(G.bestStreakThisRun,G.curStreak);
     const m=comboMult(); let pts=100*m; if(rt<1.2) pts+=50;
-    const xpGain=Math.round(pts/10);
+    const xpGain=Math.max(1, Math.round((pts/10) * curDiff().xpMult));
     G.score+=pts; G.sessXP+=xpGain;
     sfx('correct'); if(m>=3) sfx('combo');
     charCorrect();
